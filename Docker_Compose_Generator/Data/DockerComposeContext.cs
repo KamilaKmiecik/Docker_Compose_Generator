@@ -15,7 +15,6 @@ public class DockerComposeContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        // Konfiguracja relacji między tabelami, kluczy obcych, ograniczeń itp.
         modelBuilder.Entity<DockerComposeModel>()
             .HasMany(c => c.ServiceModels)
             .WithOne(s => s.DockerComposeModel)
@@ -25,7 +24,5 @@ public class DockerComposeContext : DbContext
             .HasMany(c => c.Networks)
             .WithOne(n => n.DockerComposeModel)
             .HasForeignKey(n => n.ComposeConfigurationId);
-
-        // Możesz również dodać konfigurowanie innych właściwości, jeśli jest to wymagane
     }
 }
