@@ -16,7 +16,6 @@ public class ServiceModel
 
     public string Volumes { get; set; }
 
-    // Foreign key to DockerComposeModel
     public int ComposeConfigurationId { get; set; }
     public DockerComposeModel DockerComposeModel { get; set; }
 }
