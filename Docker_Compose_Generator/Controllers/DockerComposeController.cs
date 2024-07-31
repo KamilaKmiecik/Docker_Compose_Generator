@@ -81,6 +81,15 @@ namespace Docker_Compose_Generator.Controllers
             }
 
 
+            var allowedExtensions = new[] { ".yaml", ".yml" };
+            var fileExtension = Path.GetExtension(file.FileName);
+
+            if(allowedExtensions.Contains(fileExtension, StringComparer.OrdinalIgnoreCase))
+            {
+                ModelState.AddModelError("File", "Please upload a valid Docker Compose file.");
+                return View();
+            }
+
             string yamlContent;
             using (var stream = new StreamReader(file.OpenReadStream()))
             {
