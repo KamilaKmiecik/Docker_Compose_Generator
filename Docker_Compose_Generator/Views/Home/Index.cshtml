@@ -1,8 +1,10 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewBag.Title = "Docker Compose Home";
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <h1 class="display-4">Docker Compose Generator</h1>
+    <p>Manage your Docker Compose files easily.</p>
+    <a href="@Url.Action("Create", "DockerCompose")" class="btn btn-primary">Create Docker Compose</a>
+    <a href="@Url.Action("Read", "DockerCompose")" class="btn btn-secondary">Read Docker Compose</a>
 </div>

@@ -1,0 +1,7 @@
+version: '3.1'
+sevic:
+  app:
+    image: myapp
+    ports:
+      - "5000:80"
+
