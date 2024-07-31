@@ -3,6 +3,8 @@ using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using YamlDotNet.Core;
+using Docker_Compose_Generator.Validation; 
 
 namespace Docker_Compose_Generator.Controllers
 {
@@ -39,11 +41,27 @@ namespace Docker_Compose_Generator.Controllers
             }
 
 
-            var filePath = Path.Combine(_hostEnvironment.WebRootPath, "docker-compose.yml");
+            //TODO: Wybieranie ścieżki z dysku
+            try
+            {
+                ValidatorYaml.ValidateYaml(yamlContent);
 
-            await System.IO.File.WriteAllTextAsync(filePath, yamlContent);
+                var filePath = Path.Combine(_hostEnvironment.WebRootPath, "docker-compose.yml");
 
-            return RedirectToAction(nameof(Index));
+                await System.IO.File.WriteAllTextAsync(filePath, yamlContent);
+
+                return RedirectToAction(nameof(Index));
+            }
+            catch (YamlException ex)
+            {
+                ModelState.AddModelError("YamlContent", $"Invalid YAML format: {ex.Message}");
+                return View();
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("YamlContent", $"An error occurred: {ex.Message}");
+                return View();
+            }
         }
 
         // GET: DockerCompose/Read
