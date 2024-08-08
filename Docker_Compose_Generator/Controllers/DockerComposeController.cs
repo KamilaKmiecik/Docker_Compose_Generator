@@ -45,6 +45,7 @@ namespace Docker_Compose_Generator.Controllers
 
             try
             {
+                //TODO: Fix validation
                 ValidatorYaml.ValidateYaml(yamlContent);
 
                 var filePath = Path.Combine(_hostEnvironment.WebRootPath, "docker-compose.yml");
@@ -124,6 +125,8 @@ namespace Docker_Compose_Generator.Controllers
                 return View();
             }
 
+
+            //TODO: Add version control
             var composeDict = new Dictionary<string, object>
             {
                 { "version", "3.8" },
@@ -209,6 +212,88 @@ namespace Docker_Compose_Generator.Controllers
 
             ViewBag.YamlContent = serializer.Serialize(composeDict);
             return View("Details");
+        }
+
+
+        //!!!BARDZO WAŻNE - ŁADOWANIE FORMULARZA BEZ TEGO NIE DZIAŁA!!!!
+
+        // GET: DockerCompose/CreateUsingUI
+        [HttpGet]
+        public IActionResult CreateUsingUI()
+        {
+            return View();
+        }
+
+        // POST: DockerCompose/CreateUsingUI
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateUsingUI(
+            string version,
+            string image,
+            string ports,
+            string volumes,
+            string environment,
+            string networks,
+            string restartPolicy
+        )
+        {
+            if (string.IsNullOrEmpty(version) || string.IsNullOrEmpty(image))
+            {
+                ModelState.AddModelError("Validation", "Version and Image are required.");
+                return View();
+            }
+
+            var composeDict = new Dictionary<string, object>
+            {
+                { "version", version },
+                { "services", new Dictionary<string, Dictionary<string, object>>() }
+            };
+
+            var serviceDict = new Dictionary<string, object>
+            {
+                { "image", image }
+            };
+
+            //TEST DO DZIAŁANIA
+            //TO DO - DODAĆ DYNAMICZNE DODAWANIE GUZIKIEM, UI NIE MA SENSU JAK KTOŚ NADAL MUSI SIĘ TYLE SAMO NAKOMBINOWAĆ :) !!!
+            if (!string.IsNullOrEmpty(ports))
+            {
+                serviceDict["ports"] = ports.Split(',').Select(p => p.Trim()).ToList();
+            }
+
+            if (!string.IsNullOrEmpty(volumes))
+            {
+                serviceDict["volumes"] = volumes.Split(',').Select(v => v.Trim()).ToList();
+            }
+
+            if (!string.IsNullOrEmpty(environment))
+            {
+                serviceDict["environment"] = environment.Split(',').Select(e => e.Trim()).ToList();
+            }
+
+            if (!string.IsNullOrEmpty(networks))
+            {
+                serviceDict["networks"] = networks.Split(',').Select(n => n.Trim()).ToList();
+            }
+
+            if (!string.IsNullOrEmpty(restartPolicy))
+            {
+                serviceDict["restart"] = restartPolicy;
+            }
+
+            var servicesDict = (Dictionary<string, Dictionary<string, object>>)composeDict["services"];
+            servicesDict["my_service"] = serviceDict; 
+
+            var serializer = new SerializerBuilder()
+                .WithNamingConvention(CamelCaseNamingConvention.Instance)
+                .Build();
+
+            var yamlContent = serializer.Serialize(composeDict);
+            var filePath = Path.Combine(_hostEnvironment.WebRootPath, "docker-compose.yml");
+
+            await System.IO.File.WriteAllTextAsync(filePath, yamlContent);
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }

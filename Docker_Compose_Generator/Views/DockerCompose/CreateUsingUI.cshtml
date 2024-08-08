@@ -1,0 +1,44 @@
+﻿@{
+    ViewData["Title"] = "Create Docker Compose File Using UI";
+}
+
+<h1>Create Docker Compose File Using UI</h1>
+
+<form asp-action="CreateUsingUI" method="post">
+    <div class="form-group">
+        <label for="version">Compose Version:</label>
+        <input type="text" name="version" id="version" class="form-control" required />
+    </div>
+
+    <div class="form-group">
+        <label for="image">Image:</label>
+        <input type="text" name="image" id="image" class="form-control" required />
+    </div>
+
+    <div class="form-group">
+        <label for="ports">Ports:</label>
+        <input type="text" name="ports" id="ports" class="form-control" placeholder="e.g., 8080:80,9090:90" />
+    </div>
+
+    <div class="form-group">
+        <label for="volumes">Volumes:</label>
+        <input type="text" name="volumes" id="volumes" class="form-control" placeholder="e.g., /host/path:/container/path" />
+    </div>
+
+    <div class="form-group">
+        <label for="environment">Environment Variables:</label>
+        <input type="text" name="environment" id="environment" class="form-control" placeholder="e.g., ENV_VAR=value" />
+    </div>
+
+    <div class="form-group">
+        <label for="networks">Networks:</label>
+        <input type="text" name="networks" id="networks" class="form-control" placeholder="e.g., network1,network2" />
+    </div>
+
+    <div class="form-group">
+        <label for="restartPolicy">Restart Policy:</label>
+        <input type="text" name="restartPolicy" id="restartPolicy" class="form-control" placeholder="e.g., always, unless-stopped" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Create Docker Compose File</button>
+</form>
