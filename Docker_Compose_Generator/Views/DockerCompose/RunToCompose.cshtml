@@ -1,0 +1,13 @@
+﻿@{
+    ViewData["Title"] = "Run to Compose";
+}
+
+<h1>Run to Compose</h1>
+
+<form asp-action="RunToCompose" method="post">
+    <div class="form-group">
+        <label for="dockerRunCommand">Docker Run Command:</label>
+        <input type="text" name="dockerRunCommand" id="dockerRunCommand" class="form-control" placeholder="e.g., docker run --name my-nginx -d -p 8080:80 nginx:latest" />
+    </div>
+    <button type="submit" class="btn btn-primary">Convert to Compose</button>
+</form>

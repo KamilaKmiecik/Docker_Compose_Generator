@@ -4,7 +4,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using YamlDotNet.Core;
-using Docker_Compose_Generator.Validation; 
+using Docker_Compose_Generator.Validation;
+using YamlDotNet.Serialization;
+using YamlDotNet.Serialization.NamingConventions;
+using System.Collections.Generic;
 
 namespace Docker_Compose_Generator.Controllers
 {
@@ -40,8 +43,6 @@ namespace Docker_Compose_Generator.Controllers
                 return View();
             }
 
-
-            //TODO: Wybieranie ścieżki z dysku
             try
             {
                 ValidatorYaml.ValidateYaml(yamlContent);
@@ -80,11 +81,10 @@ namespace Docker_Compose_Generator.Controllers
                 return View();
             }
 
-
             var allowedExtensions = new[] { ".yaml", ".yml" };
             var fileExtension = Path.GetExtension(file.FileName);
 
-            if(allowedExtensions.Contains(fileExtension, StringComparer.OrdinalIgnoreCase))
+            if (!allowedExtensions.Contains(fileExtension, StringComparer.OrdinalIgnoreCase))
             {
                 ModelState.AddModelError("File", "Please upload a valid Docker Compose file.");
                 return View();
@@ -97,6 +97,117 @@ namespace Docker_Compose_Generator.Controllers
             }
 
             ViewBag.YamlContent = yamlContent;
+            return View("Details");
+        }
+
+        // GET: DockerCompose/RunToCompose
+        public IActionResult RunToCompose()
+        {
+            return View();
+        }
+
+        // POST: DockerCompose/RunToCompose
+        [HttpPost]
+        public IActionResult RunToCompose(string dockerRunCommand)
+        {
+            if (string.IsNullOrEmpty(dockerRunCommand))
+            {
+                ModelState.AddModelError("dockerRunCommand", "Command cannot be empty.");
+                return View();
+            }
+
+            var parts = dockerRunCommand.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+            if (parts[0] != "docker" || parts[1] != "run")
+            {
+                ModelState.AddModelError("dockerRunCommand", "Invalid 'docker run' command.");
+                return View();
+            }
+
+            var composeDict = new Dictionary<string, object>
+            {
+                { "version", "3.8" },
+                { "services", new Dictionary<string, Dictionary<string, object>>() }
+            };
+
+            var service = new Dictionary<string, object>();
+            var serviceName = "service_name";
+
+            int i = 2;
+            while (i < parts.Length)
+            {
+                switch (parts[i])
+                {
+                    case "--name":
+                        service["container_name"] = parts[i + 1];
+                        serviceName = parts[i + 1];
+                        i++;
+                        break;
+
+                    case "-d":
+                        service["detach"] = true;
+                        break;
+
+                    case "-p":
+                        if (!service.ContainsKey("ports"))
+                        {
+                            service["ports"] = new List<string>();
+                        }
+                        ((List<string>)service["ports"]).Add(parts[i + 1]);
+                        i++;
+                        break;
+
+                    case "-v":
+                        if (!service.ContainsKey("volumes"))
+                        {
+                            service["volumes"] = new List<string>();
+                        }
+                        ((List<string>)service["volumes"]).Add(parts[i + 1]);
+                        i++;
+                        break;
+
+                    case "-e":
+                    case "--env":
+                        if (!service.ContainsKey("environment"))
+                        {
+                            service["environment"] = new List<string>();
+                        }
+                        ((List<string>)service["environment"]).Add(parts[i + 1]);
+                        i++;
+                        break;
+
+                    case "--network":
+                        if (!service.ContainsKey("networks"))
+                        {
+                            service["networks"] = new List<string>();
+                        }
+                        ((List<string>)service["networks"]).Add(parts[i + 1]);
+                        i++;
+                        break;
+
+                    case "--restart":
+                        service["restart"] = parts[i + 1];
+                        i++;
+                        break;
+
+                    default:
+                        if (!service.ContainsKey("image"))
+                        {
+                            service["image"] = parts[i];
+                        }
+                        break;
+                }
+                i++;
+            }
+
+            var servicesDict = (Dictionary<string, Dictionary<string, object>>)composeDict["services"];
+            servicesDict[serviceName] = service;
+
+            var serializer = new SerializerBuilder()
+                .WithNamingConvention(CamelCaseNamingConvention.Instance)
+                .Build();
+
+            ViewBag.YamlContent = serializer.Serialize(composeDict);
             return View("Details");
         }
     }
