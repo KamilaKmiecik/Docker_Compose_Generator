@@ -1,13 +1,13 @@
-version: 3,8
+version: 1
 services:
   my_service:
-    image: test
+    image: 1
     ports:
-    - test
+    - 1
     volumes:
-    - test
+    - 1
     environment:
-    - test
+    - 1
     networks:
-    - test
-    restart: test
+    - 1
+    restart: 1

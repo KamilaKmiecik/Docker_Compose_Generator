@@ -8,6 +8,7 @@ using Docker_Compose_Generator.Validation;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 using System.Collections.Generic;
+using Docker_Compose_Generator.Models;
 
 namespace Docker_Compose_Generator.Controllers
 {
@@ -225,64 +226,55 @@ namespace Docker_Compose_Generator.Controllers
         }
 
         // POST: DockerCompose/CreateUsingUI
+        // POST: DockerCompose/CreateUsingUI
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateUsingUI(
-            string version,
-            string image,
-            string ports,
-            string volumes,
-            string environment,
-            string networks,
-            string restartPolicy
-        )
+        public async Task<IActionResult> CreateUsingUI(DockerComposeCreateDto model)
         {
-            if (string.IsNullOrEmpty(version) || string.IsNullOrEmpty(image))
+            if (!ModelState.IsValid)
             {
-                ModelState.AddModelError("Validation", "Version and Image are required.");
-                return View();
+                return View(model); // Return the view with the current model to display validation errors
             }
 
             var composeDict = new Dictionary<string, object>
             {
-                { "version", version },
+                { "version", model.Version },
                 { "services", new Dictionary<string, Dictionary<string, object>>() }
             };
 
             var serviceDict = new Dictionary<string, object>
             {
-                { "image", image }
+                { "image", model.Image }
             };
 
-            //TEST DO DZIAŁANIA
-            //TO DO - DODAĆ DYNAMICZNE DODAWANIE GUZIKIEM, UI NIE MA SENSU JAK KTOŚ NADAL MUSI SIĘ TYLE SAMO NAKOMBINOWAĆ :) !!!
-            if (!string.IsNullOrEmpty(ports))
+            // Map optional properties if they are provided
+            if (!string.IsNullOrEmpty(model.Ports))
             {
-                serviceDict["ports"] = ports.Split(',').Select(p => p.Trim()).ToList();
+                serviceDict["ports"] = model.Ports.Split(',').Select(p => p.Trim()).ToList();
             }
 
-            if (!string.IsNullOrEmpty(volumes))
+            if (!string.IsNullOrEmpty(model.Volumes))
             {
-                serviceDict["volumes"] = volumes.Split(',').Select(v => v.Trim()).ToList();
+                serviceDict["volumes"] = model.Volumes.Split(',').Select(v => v.Trim()).ToList();
             }
 
-            if (!string.IsNullOrEmpty(environment))
+            if (!string.IsNullOrEmpty(model.Environment))
             {
-                serviceDict["environment"] = environment.Split(',').Select(e => e.Trim()).ToList();
+                serviceDict["environment"] = model.Environment.Split(',').Select(e => e.Trim()).ToList();
             }
 
-            if (!string.IsNullOrEmpty(networks))
+            if (!string.IsNullOrEmpty(model.Networks))
             {
-                serviceDict["networks"] = networks.Split(',').Select(n => n.Trim()).ToList();
+                serviceDict["networks"] = model.Networks.Split(',').Select(n => n.Trim()).ToList();
             }
 
-            if (!string.IsNullOrEmpty(restartPolicy))
+            if (!string.IsNullOrEmpty(model.RestartPolicy))
             {
-                serviceDict["restart"] = restartPolicy;
+                serviceDict["restart"] = model.RestartPolicy;
             }
 
             var servicesDict = (Dictionary<string, Dictionary<string, object>>)composeDict["services"];
-            servicesDict["my_service"] = serviceDict; 
+            servicesDict["my_service"] = serviceDict;
 
             var serializer = new SerializerBuilder()
                 .WithNamingConvention(CamelCaseNamingConvention.Instance)
