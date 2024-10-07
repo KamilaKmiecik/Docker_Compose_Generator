@@ -1,13 +1,2 @@
 version: 1
-services:
-  my_service:
-    image: 1
-    ports:
-    - 1
-    volumes:
-    - 1
-    environment:
-    - 1
-    networks:
-    - 1
-    restart: 1
+services: {}

@@ -1,44 +1,75 @@
-﻿@{
-    ViewData["Title"] = "Create Docker Compose File Using UI";
+﻿@model Docker_Compose_Generator.Models.DockerComposeCreateDto
+
+@{
+    ViewData["Title"] = "Create Docker Compose";
 }
 
-<h1>Create Docker Compose File Using UI</h1>
+<h2>Create Docker Compose</h2>
 
 <form asp-action="CreateUsingUI" method="post">
-    <div class="form-group">
-        <label for="version">Compose Version:</label>
-        <input type="text" name="version" id="version" class="form-control" required />
-    </div>
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
     <div class="form-group">
-        <label for="image">Image:</label>
-        <input type="text" name="image" id="image" class="form-control" required />
+        <label asp-for="Version" class="control-label"></label>
+        <input asp-for="Version" class="form-control" />
+        <span asp-validation-for="Version" class="text-danger"></span>
     </div>
 
-    <div class="form-group">
-        <label for="ports">Ports:</label>
-        <input type="text" name="ports" id="ports" class="form-control" placeholder="e.g., 8080:80,9090:90" />
+    <h3>Services</h3>
+    <div id="services-container">
     </div>
 
-    <div class="form-group">
-        <label for="volumes">Volumes:</label>
-        <input type="text" name="volumes" id="volumes" class="form-control" placeholder="e.g., /host/path:/container/path" />
-    </div>
+    <button type="button" class="btn btn-success" onclick="addService()">Add Service</button>
 
-    <div class="form-group">
-        <label for="environment">Environment Variables:</label>
-        <input type="text" name="environment" id="environment" class="form-control" placeholder="e.g., ENV_VAR=value" />
-    </div>
-
-    <div class="form-group">
-        <label for="networks">Networks:</label>
-        <input type="text" name="networks" id="networks" class="form-control" placeholder="e.g., network1,network2" />
-    </div>
-
-    <div class="form-group">
-        <label for="restartPolicy">Restart Policy:</label>
-        <input type="text" name="restartPolicy" id="restartPolicy" class="form-control" placeholder="e.g., always, unless-stopped" />
-    </div>
-
-    <button type="submit" class="btn btn-primary">Create Docker Compose File</button>
+    <button type="submit" class="btn btn-primary">Create Compose File</button>
 </form>
+
+@section Scripts {
+    <script>
+        let serviceIndex = 0;
+
+        function addService() {
+            const servicesContainer = document.getElementById('services-container');
+            const serviceDiv = document.createElement('div');
+            serviceDiv.classList.add('service');
+            serviceDiv.innerHTML = `
+                <h4>Service ${serviceIndex + 1}</h4>
+                <div class="form-group">
+                    <label for="Services_${serviceIndex}__Name">Name</label>
+                    <input name="Services[${serviceIndex}].Name" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label for="Services_${serviceIndex}__Image">Image</label>
+                    <input name="Services[${serviceIndex}].Image" class="form-control" />
+                </div>
+                <div id="ports-container-${serviceIndex}" class="form-group">
+                    <label for="Services_${serviceIndex}__Ports">Ports</label>
+                    <button type="button" class="btn btn-info" onclick="addField('ports-container-${serviceIndex}', 'Services[${serviceIndex}].Ports')">Add Port</button>
+                </div>
+                <div id="volumes-container-${serviceIndex}" class="form-group">
+                    <label for="Services_${serviceIndex}__Volumes">Volumes</label>
+                    <button type="button" class="btn btn-info" onclick="addField('volumes-container-${serviceIndex}', 'Services[${serviceIndex}].Volumes')">Add Volume</button>
+                </div>
+                <div id="environment-container-${serviceIndex}" class="form-group">
+                    <label for="Services_${serviceIndex}__Environment">Environment</label>
+                    <button type="button" class="btn btn-info" onclick="addField('environment-container-${serviceIndex}', 'Services[${serviceIndex}].Environment')">Add Environment Variable</button>
+                </div>
+                <div class="form-group">
+                    <label for="Services_${serviceIndex}__RestartPolicy">Restart Policy</label>
+                    <input name="Services[${serviceIndex}].RestartPolicy" class="form-control" />
+                </div>
+            `;
+            servicesContainer.appendChild(serviceDiv);
+            serviceIndex++;
+        }
+
+        function addField(containerId, fieldName) {
+            const container = document.getElementById(containerId);
+            const input = document.createElement('input');
+            input.name = fieldName;
+            input.classList.add('form-control');
+            input.style.marginTop = '5px';
+            container.appendChild(input);
+        }
+    </script>
+}

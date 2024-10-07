@@ -9,16 +9,18 @@ using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 using System.Collections.Generic;
 using Docker_Compose_Generator.Models;
+using Docker_Compose_Generator.Services;
 
 namespace Docker_Compose_Generator.Controllers
 {
     public class DockerComposeController : Controller
     {
         private readonly IWebHostEnvironment _hostEnvironment;
-
-        public DockerComposeController(IWebHostEnvironment hostEnvironment)
+        private readonly IDockerComposeService _dockerControllerService;
+        public DockerComposeController(IWebHostEnvironment hostEnvironment, IDockerComposeService dockerControllerService)
         {
             _hostEnvironment = hostEnvironment;
+            _dockerControllerService = dockerControllerService; 
         }
 
         // GET: DockerCompose/Index
@@ -233,59 +235,34 @@ namespace Docker_Compose_Generator.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View(model); // Return the view with the current model to display validation errors
+                return View(model);
             }
 
-            var composeDict = new Dictionary<string, object>
+            try
             {
-                { "version", model.Version },
-                { "services", new Dictionary<string, Dictionary<string, object>>() }
-            };
+                await SaveYaml(model);
 
-            var serviceDict = new Dictionary<string, object>
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
             {
-                { "image", model.Image }
-            };
-
-            // Map optional properties if they are provided
-            if (!string.IsNullOrEmpty(model.Ports))
-            {
-                serviceDict["ports"] = model.Ports.Split(',').Select(p => p.Trim()).ToList();
+                ModelState.AddModelError("Error", $"A{ex.Message}\n {ex.StackTrace}");
+                return View(model);
             }
 
-            if (!string.IsNullOrEmpty(model.Volumes))
-            {
-                serviceDict["volumes"] = model.Volumes.Split(',').Select(v => v.Trim()).ToList();
-            }
+        }
 
-            if (!string.IsNullOrEmpty(model.Environment))
-            {
-                serviceDict["environment"] = model.Environment.Split(',').Select(e => e.Trim()).ToList();
-            }
 
-            if (!string.IsNullOrEmpty(model.Networks))
-            {
-                serviceDict["networks"] = model.Networks.Split(',').Select(n => n.Trim()).ToList();
-            }
+        //TODO: Też do serwisu?
+        private async Task SaveYaml(DockerComposeCreateDto model)
+        {
+            string yamlContent = _dockerControllerService.GenerateDockerComposeYaml(model);
 
-            if (!string.IsNullOrEmpty(model.RestartPolicy))
-            {
-                serviceDict["restart"] = model.RestartPolicy;
-            }
+            //TODO: Zapis wybranej ścieżki
 
-            var servicesDict = (Dictionary<string, Dictionary<string, object>>)composeDict["services"];
-            servicesDict["my_service"] = serviceDict;
-
-            var serializer = new SerializerBuilder()
-                .WithNamingConvention(CamelCaseNamingConvention.Instance)
-                .Build();
-
-            var yamlContent = serializer.Serialize(composeDict);
             var filePath = Path.Combine(_hostEnvironment.WebRootPath, "docker-compose.yml");
 
             await System.IO.File.WriteAllTextAsync(filePath, yamlContent);
-
-            return RedirectToAction(nameof(Index));
         }
     }
 }
