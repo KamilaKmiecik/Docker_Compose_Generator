@@ -253,12 +253,12 @@ namespace Docker_Compose_Generator.Controllers
         }
 
 
-        //TODO: Też do serwisu?
+        //TODO: Też do serwisu? tak przenieś 
         private async Task SaveYaml(DockerComposeCreateDto model)
         {
             string yamlContent = _dockerControllerService.GenerateDockerComposeYaml(model);
 
-            //TODO: Zapis wybranej ścieżki
+            //TODO: Pobieranie pliku 
 
             var filePath = Path.Combine(_hostEnvironment.WebRootPath, "docker-compose.yml");
 
