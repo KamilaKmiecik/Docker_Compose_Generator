@@ -226,6 +226,24 @@ namespace Docker_Compose_Generator.Controllers
             return View();
         }
 
+        [HttpGet]
+        public IActionResult AddServicePartial(ServiceDto model)
+        {
+            return PartialView(model);
+        }
+
+        [HttpGet]
+        public IActionResult AddNetworkPartial(NetworkDTO model)
+        {
+            return PartialView(model);
+        }
+
+        [HttpGet]
+        public IActionResult AddVolumePartial(VolumeDTO model)
+        {
+            return PartialView(model);
+        }
+
         // POST: DockerCompose/CreateUsingUI
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -235,9 +253,18 @@ namespace Docker_Compose_Generator.Controllers
             {
                 return View(model);
             }
+            if (model == null)
+                model = new DockerComposeCreateDto
+                {
+                    Version = "3.8", // Set a default version or leave it blank
+                    Services = new List<ServiceDto>(), // Initialize as empty
+                    Volumes = new List<VolumeDTO>(), // Initialize as empty
+                    Networks = new List<NetworkDTO>() // Initialize as empty
+                };
 
             try
             {
+
                 var yamlContent = _dockerComposeService.GenerateDockerComposeYaml(model);
 
                 if(string.IsNullOrEmpty(yamlContent))
@@ -252,6 +279,20 @@ namespace Docker_Compose_Generator.Controllers
             }
         }
 
+        public IActionResult GetPartial(string type)
+        {
+            switch (type.ToLower())
+            {
+                case "service":
+                    return PartialView("AddServicePartial"); 
+                case "network":
+                    return PartialView("AddNetworkPartial"); 
+                case "volume":
+                    return PartialView("AddVolumePartial"); 
+                default:
+                    return NotFound();
+            }
+        }
 
     }
 }
