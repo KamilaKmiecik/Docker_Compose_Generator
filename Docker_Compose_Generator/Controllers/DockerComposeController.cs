@@ -219,8 +219,6 @@ namespace Docker_Compose_Generator.Controllers
         }
 
 
-        //!!!BARDZO WAŻNE - ŁADOWANIE FORMULARZA BEZ TEGO NIE DZIAŁA!!!!
-
         // GET: DockerCompose/CreateUsingUI
         [HttpGet]
         public IActionResult CreateUsingUI()

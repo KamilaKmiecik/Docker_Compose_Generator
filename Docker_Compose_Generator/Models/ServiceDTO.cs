@@ -1,12 +1,59 @@
-﻿namespace Docker_Compose_Generator.Models;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.ComponentModel.DataAnnotations;
+
+namespace Docker_Compose_Generator.Models;
 
 public class ServiceDto
 {
     public required string Name { get; set; }
+
     public required string Image { get; set; }
-    public List<string>? Ports { get; set; } = new List<string>();
-    public List<string>? Volumes { get; set; } = new List<string>();
-    public List<string>? Environment { get; set; } = new List<string>();
-    public List<string>? Networks { get; set; } = new List<string>();
-    public string? RestartPolicy { get; set; }
+
+    public List<Port>? Ports { get; set; } = new List<Port>();
+    public List<Volume>? Volumes { get; set; } = new List<Volume>();
+
+    public List<Environment>? Environment { get; set; } = new List<Environment>();
+
+    public List<Network>? Networks { get; set; } = new List<Network>();
+
+    public RestartPolicy? RestartPolicy { get; set; }
 }
+
+public class Port
+{
+    public required int HostPort { get; set; }
+    public required int ContainerPort { get; set; }
+    public string? Protocol { get; set; } = "tcp";
+}
+
+
+public class Volume : VolumeDTO
+{
+    public required string Source { get; set; }
+    public required string Target { get; set; }
+    public string? AccessMode { get; set; } = "rw";
+}
+
+public class Network : NetworkDTO
+{
+    public string? Alias { get; set; }
+}
+
+
+public class Environment
+{
+    public required string Key { get; set; }
+    public required string Value { get; set; }
+}
+
+
+public class RestartPolicy
+{
+    // "no", "always", "on-failure", "unless-stopped"
+    public required string Condition { get; set; }
+ 
+    // tylko dla "on-failure"
+    public int? MaxRetries { get; set; }  
+    public TimeSpan? Delay { get; set; }  
+}
+
