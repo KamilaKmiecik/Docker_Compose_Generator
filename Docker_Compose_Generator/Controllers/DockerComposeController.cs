@@ -16,11 +16,12 @@ namespace Docker_Compose_Generator.Controllers
     public class DockerComposeController : Controller
     {
         private readonly IWebHostEnvironment _hostEnvironment;
-        private readonly IDockerComposeService _dockerControllerService;
-        public DockerComposeController(IWebHostEnvironment hostEnvironment, IDockerComposeService dockerControllerService)
+        private readonly IDockerComposeService _dockerComposeService;
+
+        public DockerComposeController(IWebHostEnvironment hostEnvironment, IDockerComposeService dockerComposeService)
         {
             _hostEnvironment = hostEnvironment;
-            _dockerControllerService = dockerControllerService; 
+            _dockerComposeService = dockerComposeService;
         }
 
         // GET: DockerCompose/Index
@@ -228,7 +229,6 @@ namespace Docker_Compose_Generator.Controllers
         }
 
         // POST: DockerCompose/CreateUsingUI
-        // POST: DockerCompose/CreateUsingUI
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateUsingUI(DockerComposeCreateDto model)
@@ -240,29 +240,20 @@ namespace Docker_Compose_Generator.Controllers
 
             try
             {
-                await SaveYaml(model);
+                var yamlContent = _dockerComposeService.GenerateDockerComposeYaml(model);
 
-                return RedirectToAction(nameof(Index));
+                if(string.IsNullOrEmpty(yamlContent))
+                    return View(model);
+
+                return File(System.Text.Encoding.UTF8.GetBytes(yamlContent), "application/octet-stream", "docker-compose.yml");
             }
             catch (Exception ex)
             {
                 ModelState.AddModelError("Error", $"A{ex.Message}\n {ex.StackTrace}");
                 return View(model);
             }
-
         }
 
 
-        //TODO: Też do serwisu? tak przenieś 
-        private async Task SaveYaml(DockerComposeCreateDto model)
-        {
-            string yamlContent = _dockerControllerService.GenerateDockerComposeYaml(model);
-
-            //TODO: Pobieranie pliku 
-
-            var filePath = Path.Combine(_hostEnvironment.WebRootPath, "docker-compose.yml");
-
-            await System.IO.File.WriteAllTextAsync(filePath, yamlContent);
-        }
     }
 }
