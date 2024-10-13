@@ -69,7 +69,6 @@
 
                 $.get('@Url.Action("GetPartial", "DockerCompose")', { type: type }, function (data) {
                     var newEntryDiv = $('<div class="entry"></div>').append(data);
-                    newEntryDiv.append('<button type="button" class="btn btn-danger remove-entry">Remove ' + type.charAt(0).toUpperCase() + type.slice(1) + '</button>');
                     $('#' + type + 's-container').append(newEntryDiv);
                 }).fail(function (xhr, status, error) {
                     console.error("Error fetching partial:", status, error);
