@@ -1,9 +1,13 @@
 using Docker_Compose_Generator.Services;
 using Microsoft.EntityFrameworkCore;
+using Docker_Compose_Generator.Extensions;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddScoped<IDockerComposeService, DockerComposeService>();
+//builder.Services.AddScoped<IDockerComposeService, DockerComposeService>();
+builder.Services.AddServices();
+
 
 // Dodaj kontrolery i widoki
 builder.Services.AddControllersWithViews();

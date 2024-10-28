@@ -1,0 +1,134 @@
+﻿@model Docker_Compose_Generator.Models.NetworkDTO
+@{
+    var index = ViewData["index"];
+}
+
+<div id="network-container">
+    <div class="network-item">
+        <h4>Network</h4>
+        <div class="form-group">
+            <label asp-for="Name"></label>
+            <input asp-for="Name" name="Networks[@index].Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Driver"></label>
+            <input asp-for="Driver" name="Networks[@index].Driver" class="form-control" />
+            <span asp-validation-for="Driver" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label>IPAM Driver</label>
+            <input type="text" name="Networks[@index].Ipam.Driver" class="form-control" />
+            <span asp-validation-for="Ipam.Driver" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label>IPAM Configuration</label>
+            <div id="ipam-config-container">
+            </div>
+            <button type="button" id="add-ipam-config-btn" class="btn btn-secondary">Add IPAM Config</button>
+        </div>
+
+        <div class="form-group">
+            <label>Driver Options</label>
+            <div id="driver-options-container">
+            </div>
+            <button type="button" id="add-driver-option-btn" class="btn btn-secondary">Add Driver Option</button>
+        </div>
+
+        <div class="form-group">
+            <label>Internal</label>
+            <input type="checkbox" name="Networks[@index].Internal" value="true" />
+            <input type="hidden" name="Networks[@index].Internal" value="false" />
+            <span asp-validation-for="Internal" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label>Attachable</label>
+            <input type="checkbox" name="Networks[@index].Attachable" value="true" />
+            <input type="hidden" name="Networks[@index].Attachable" value="false" />
+            <span asp-validation-for="Attachable" class="text-danger"></span>
+        </div>
+
+        <button type="button" class="btn btn-danger remove-network-btn">Remove Network</button>
+    </div>
+</div>
+
+<script>
+    document.getElementById('add-ipam-config-btn').addEventListener('click', function () {
+        const ipamConfigContainer = document.getElementById('ipam-config-container');
+
+        const configDiv = document.createElement('div');
+        configDiv.classList.add('ipam-config');
+
+        const subnetInput = document.createElement('input');
+        subnetInput.type = 'text';
+        subnetInput.name = `Networks[@index].Ipam.Configurations[0].Subnet`;
+        subnetInput.classList.add('form-control');
+        subnetInput.placeholder = 'Subnet';
+        configDiv.appendChild(subnetInput);
+
+        const gatewayInput = document.createElement('input');
+        gatewayInput.type = 'text';
+        gatewayInput.name = `Networks[@index].Ipam.Configurations[0].Gateway`;
+        gatewayInput.classList.add('form-control');
+        gatewayInput.placeholder = 'Gateway';
+        configDiv.appendChild(gatewayInput);
+
+        const removeIpamBtn = document.createElement('button');
+        removeIpamBtn.type = 'button';
+        removeIpamBtn.classList.add('btn', 'btn-danger', 'remove-ipam-btn');
+        removeIpamBtn.innerText = 'Remove IPAM Config';
+        configDiv.appendChild(removeIpamBtn);
+
+        ipamConfigContainer.appendChild(configDiv);
+
+        removeIpamBtn.addEventListener('click', function () {
+            ipamConfigContainer.removeChild(configDiv);
+        });
+    });
+
+    document.getElementById('add-driver-option-btn').addEventListener('click', function () {
+        const driverOptionsContainer = document.getElementById('driver-options-container');
+
+        const optionDiv = document.createElement('div');
+        optionDiv.classList.add('driver-option');
+
+        const keyInput = document.createElement('input');
+        keyInput.type = 'text';
+        keyInput.name = `Networks[@index].DriverOptions[0].Key`;
+        keyInput.classList.add('form-control');
+        keyInput.placeholder = 'Key';
+        optionDiv.appendChild(keyInput);
+
+        const valueInput = document.createElement('input');
+        valueInput.type = 'text';
+        valueInput.name = `Networks[@index].DriverOptions[0].Value`;
+        valueInput.classList.add('form-control');
+        valueInput.placeholder = 'Value';
+        optionDiv.appendChild(valueInput);
+
+        const removeDriverBtn = document.createElement('button');
+        removeDriverBtn.type = 'button';
+        removeDriverBtn.classList.add('btn', 'btn-danger', 'remove-driver-btn');
+        removeDriverBtn.innerText = 'Remove Driver Option';
+        optionDiv.appendChild(removeDriverBtn);
+
+        driverOptionsContainer.appendChild(optionDiv);
+
+        removeDriverBtn.addEventListener('click', function () {
+            driverOptionsContainer.removeChild(optionDiv);
+        });
+    });
+
+    document.querySelectorAll('.remove-network-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const networkItem = btn.closest('.network-item');
+            networkItem.parentNode.removeChild(networkItem);
+        });
+    });
+</script>
+
+<script src="~/js/site.js"></script>

@@ -1,0 +1,128 @@
+﻿@model Docker_Compose_Generator.Models.VolumeDTO
+@{
+    var index = ViewData["index"];
+}
+
+<div id="volume-container">
+    <div class="volume-item">
+        <h4>Volume</h4>
+        <div class="form-group">
+            <label asp-for="Name"></label>
+            <input asp-for="Name" name="Volumes[@index].Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Driver"></label>
+            <input asp-for="Driver" name="Volumes[@index].Driver" class="form-control" />
+            <span asp-validation-for="Driver" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label>Driver Options</label>
+            <div id="driver-options-container">
+            </div>
+            <button type="button" id="add-driver-option-btn" class="btn btn-secondary">Add Driver Option</button>
+        </div>
+
+        <div class="form-group">
+            <label>Labels</label>
+            <div id="labels-container">
+            </div>
+            <button type="button" id="add-label-btn" class="btn btn-secondary">Add Label</button>
+        </div>
+
+        <div class="form-group">
+            <label>External</label>
+            <input type="checkbox" name="Volumes[@index].External" value="true" />
+            <input type="hidden" name="Volumes[@index].External" value="false" />
+            <span asp-validation-for="External" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label>Read-Only</label>
+            <input type="checkbox" name="Volumes[@index].ReadOnly" value="true" />
+            <input type="hidden" name="Volumes[@index].ReadOnly" value="false" />
+            <span asp-validation-for="ReadOnly" class="text-danger"></span>
+        </div>
+
+        <button type="button" class="btn btn-danger remove-volume-btn">Remove Volume</button>
+    </div>
+</div>
+
+<script>
+    document.getElementById('add-driver-option-btn').addEventListener('click', function () {
+        const driverOptionsContainer = document.getElementById('driver-options-container');
+        const optionIndex = driverOptionsContainer.children.length;
+
+        const optionDiv = document.createElement('div');
+        optionDiv.classList.add('driver-option');
+
+        const keyInput = document.createElement('input');
+        keyInput.type = 'text';
+        keyInput.name = `Volumes[@index].DriverOptions[${optionIndex}].Key`;
+        keyInput.classList.add('form-control');
+        keyInput.placeholder = 'Key';
+        optionDiv.appendChild(keyInput);
+
+        const valueInput = document.createElement('input');
+        valueInput.type = 'text';
+        valueInput.name = `Volumes[@index].DriverOptions[${optionIndex}].Value`;
+        valueInput.classList.add('form-control');
+        valueInput.placeholder = 'Value';
+        optionDiv.appendChild(valueInput);
+
+        const removeDriverOptionBtn = document.createElement('button');
+        removeDriverOptionBtn.type = 'button';
+        removeDriverOptionBtn.classList.add('btn', 'btn-danger', 'remove-driver-option-btn');
+        removeDriverOptionBtn.innerText = 'Remove Driver Option';
+        optionDiv.appendChild(removeDriverOptionBtn);
+
+        driverOptionsContainer.appendChild(optionDiv);
+
+        removeDriverOptionBtn.addEventListener('click', function () {
+            driverOptionsContainer.removeChild(optionDiv);
+        });
+    });
+
+    document.getElementById('add-label-btn').addEventListener('click', function () {
+        const labelsContainer = document.getElementById('labels-container');
+        const labelIndex = labelsContainer.children.length;
+
+        const labelDiv = document.createElement('div');
+        labelDiv.classList.add('label');
+
+        const keyInput = document.createElement('input');
+        keyInput.type = 'text';
+        keyInput.name = `Volumes[@index].Labels[${labelIndex}].Key`;
+        keyInput.classList.add('form-control');
+        keyInput.placeholder = 'Label Key';
+        labelDiv.appendChild(keyInput);
+
+        const valueInput = document.createElement('input');
+        valueInput.type = 'text';
+        valueInput.name = `Volumes[@index].Labels[${labelIndex}].Value`;
+        valueInput.classList.add('form-control');
+        valueInput.placeholder = 'Label Value';
+        labelDiv.appendChild(valueInput);
+
+        const removeLabelBtn = document.createElement('button');
+        removeLabelBtn.type = 'button';
+        removeLabelBtn.classList.add('btn', 'btn-danger', 'remove-label-btn');
+        removeLabelBtn.innerText = 'Remove Label';
+        labelDiv.appendChild(removeLabelBtn);
+
+        labelsContainer.appendChild(labelDiv);
+
+        removeLabelBtn.addEventListener('click', function () {
+            labelsContainer.removeChild(labelDiv);
+        });
+    });
+
+    document.querySelectorAll('.remove-volume-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const volumeItem = btn.closest('.volume-item');
+            volumeItem.parentNode.removeChild(volumeItem);
+        });
+    });
+</script>
