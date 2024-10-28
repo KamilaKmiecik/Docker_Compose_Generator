@@ -15,10 +15,10 @@
     <div id="services-container">
         @if (Model?.Services != null && Model.Services.Any())
         {
-            foreach (var service in Model.Services)
+            for (int i = 0; i < Model.Services.Count; i++)
             {
                 <div class="entry">
-                    @Html.Partial("AddServicePartial", service)
+                    <partial name="_ServicePartial" />
                     <button type="button" class="btn btn-danger remove-entry">Remove Service</button>
                 </div>
             }
@@ -30,10 +30,13 @@
     <div id="networks-container">
         @if (Model?.Networks != null && Model.Networks.Any())
         {
-            foreach (var network in Model.Networks)
+            for (int i = 0; i < Model.Networks.Count; i++)
             {
                 <div class="entry">
-                    @Html.Partial("AddNetworkPartial", network)
+                    @Html.Partial("AddNetworkPartial", Model.Networks[i], new ViewDataDictionary(ViewData)
+            {
+            { "index", i }
+            })
                     <button type="button" class="btn btn-danger remove-entry">Remove Network</button>
                 </div>
             }
@@ -45,10 +48,13 @@
     <div id="volumes-container">
         @if (Model?.Volumes != null && Model.Volumes.Any())
         {
-            foreach (var volume in Model.Volumes)
+            for (int i = 0; i < Model.Volumes.Count; i++)
             {
                 <div class="entry">
-                    @Html.Partial("AddVolumePartial", volume)
+                    @Html.Partial("AddVolumePartial", Model.Volumes[i], new ViewDataDictionary(ViewData)
+            {
+            { "index", i }
+            })
                     <button type="button" class="btn btn-danger remove-entry">Remove Volume</button>
                 </div>
             }
@@ -63,11 +69,21 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function () {
+            let serviceIndex = $('#services-container .entry').length;
+            let networkIndex = $('#networks-container .entry').length;
+            let volumeIndex = $('#volumes-container .entry').length;
+
             $('.add-entry').click(function () {
                 var type = $(this).data('type');
+                var index;
+
+                if (type === 'service') index = serviceIndex++;
+                if (type === 'network') index = networkIndex++;
+                if (type === 'volume') index = volumeIndex++;
+
                 var partialViewName = "Add" + type.charAt(0).toUpperCase() + type.slice(1) + "Partial";
 
-                $.get('@Url.Action("GetPartial", "DockerCompose")', { type: type }, function (data) {
+                $.get('@Url.Action("GetPartial", "DockerCompose")', { type: type, index: index }, function (data) {
                     var newEntryDiv = $('<div class="entry"></div>').append(data);
                     $('#' + type + 's-container').append(newEntryDiv);
                 }).fail(function (xhr, status, error) {

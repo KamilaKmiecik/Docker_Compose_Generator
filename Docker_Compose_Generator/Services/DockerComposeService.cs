@@ -11,12 +11,12 @@ namespace Docker_Compose_Generator.Services
         public string GenerateDockerComposeYaml(DockerComposeCreateDto model)
         {
             var composeDict = new Dictionary<string, object>
-    {
-        { "version", model.Version },
-        { "services", new Dictionary<string, object>() },
-        { "volumes", GenerateVolumesSection(model.Volumes) },
-        { "networks", GenerateNetworksSection(model.Networks) }
-    };
+            {
+                { "version", model.Version },
+                { "services", new Dictionary<string, object>() },
+                { "volumes", GenerateVolumesSection(model.Volumes) },
+                { "networks", GenerateNetworksSection(model.Networks) }
+            };
 
             var servicesDict = (Dictionary<string, object>)composeDict["services"];
 

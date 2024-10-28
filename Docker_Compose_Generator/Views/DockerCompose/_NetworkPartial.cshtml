@@ -1,23 +1,26 @@
 ﻿@model Docker_Compose_Generator.Models.NetworkDTO
+@{
+    var index = ViewData["index"];
+}
 
 <div id="network-container">
     <div class="network-item">
         <h4>Network</h4>
         <div class="form-group">
             <label asp-for="Name"></label>
-            <input asp-for="Name" class="form-control" />
+            <input asp-for="Name" name="Networks[@index].Name" class="form-control" />
             <span asp-validation-for="Name" class="text-danger"></span>
         </div>
 
         <div class="form-group">
             <label asp-for="Driver"></label>
-            <input asp-for="Driver" class="form-control" />
+            <input asp-for="Driver" name="Networks[@index].Driver" class="form-control" />
             <span asp-validation-for="Driver" class="text-danger"></span>
         </div>
 
         <div class="form-group">
             <label>IPAM Driver</label>
-            <input type="text" name="Ipam.Driver" class="form-control" />
+            <input type="text" name="Networks[@index].Ipam.Driver" class="form-control" />
             <span asp-validation-for="Ipam.Driver" class="text-danger"></span>
         </div>
 
@@ -37,15 +40,15 @@
 
         <div class="form-group">
             <label>Internal</label>
-            <input type="checkbox" id="Internal" name="Internal" value="true" />
-            <input type="hidden" name="Internal" value="false" /> 
+            <input type="checkbox" name="Networks[@index].Internal" value="true" />
+            <input type="hidden" name="Networks[@index].Internal" value="false" />
             <span asp-validation-for="Internal" class="text-danger"></span>
         </div>
 
         <div class="form-group">
             <label>Attachable</label>
-            <input type="checkbox" id="Attachable" name="Attachable" value="true" />
-            <input type="hidden" name="Attachable" value="false" />
+            <input type="checkbox" name="Networks[@index].Attachable" value="true" />
+            <input type="hidden" name="Networks[@index].Attachable" value="false" />
             <span asp-validation-for="Attachable" class="text-danger"></span>
         </div>
 
@@ -62,14 +65,14 @@
 
         const subnetInput = document.createElement('input');
         subnetInput.type = 'text';
-        subnetInput.name = "Ipam.Configurations[].Subnet";
+        subnetInput.name = `Networks[@index].Ipam.Configurations[0].Subnet`;
         subnetInput.classList.add('form-control');
         subnetInput.placeholder = 'Subnet';
         configDiv.appendChild(subnetInput);
 
         const gatewayInput = document.createElement('input');
         gatewayInput.type = 'text';
-        gatewayInput.name = "Ipam.Configurations[].Gateway";
+        gatewayInput.name = `Networks[@index].Ipam.Configurations[0].Gateway`;
         gatewayInput.classList.add('form-control');
         gatewayInput.placeholder = 'Gateway';
         configDiv.appendChild(gatewayInput);
@@ -95,14 +98,14 @@
 
         const keyInput = document.createElement('input');
         keyInput.type = 'text';
-        keyInput.name = "DriverOptions[0].Key";
+        keyInput.name = `Networks[@index].DriverOptions[0].Key`;
         keyInput.classList.add('form-control');
         keyInput.placeholder = 'Key';
         optionDiv.appendChild(keyInput);
 
         const valueInput = document.createElement('input');
         valueInput.type = 'text';
-        valueInput.name = "DriverOptions[0].Value";
+        valueInput.name = `Networks[@index].DriverOptions[0].Value`;
         valueInput.classList.add('form-control');
         valueInput.placeholder = 'Value';
         optionDiv.appendChild(valueInput);

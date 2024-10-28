@@ -17,6 +17,12 @@ public class ServiceDto
     public List<Network>? Networks { get; set; } = new List<Network>();
 
     public RestartPolicy? RestartPolicy { get; set; }
+
+
+    public ServiceDto()
+    {
+            
+    }
 }
 
 public class Port

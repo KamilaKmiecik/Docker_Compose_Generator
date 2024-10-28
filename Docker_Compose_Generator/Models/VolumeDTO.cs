@@ -12,5 +12,12 @@ public class VolumeDTO
 
     public bool? External { get; set; } 
 
-    public bool? ReadOnly { get; set; } 
+    public bool? ReadOnly { get; set; }
+
+
+
+    public VolumeDTO()
+    {
+            
+    }
 }

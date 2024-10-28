@@ -12,7 +12,13 @@ public class NetworkDTO
 
     public IPAMConfiguration? Ipam { get; set; } 
 
-    public Dictionary<string, string>? DriverOptions { get; set; } 
+    public Dictionary<string, string>? DriverOptions { get; set; }
+
+
+    public NetworkDTO()
+    {
+            
+    }
 }
 
 public class IPAMConfiguration
