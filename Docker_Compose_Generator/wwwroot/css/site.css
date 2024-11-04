@@ -1,18 +1,36 @@
-html {
-  font-size: 14px;
+/* Button Styles */
+.btn {
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    transition: background-color 0.3s, transform 0.2s; /* Added transform for hover effect */
+    font-weight: bold; /* Make button text bold */
 }
 
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+.btn-secondary {
+    background-color: #4b4b4b; /* Medium gray for secondary buttons */
+    color: #ffffff; /* White text */
 }
 
-html {
-  position: relative;
-  min-height: 100%;
+    .btn-secondary:hover {
+        background-color: #6b6b6b; /* Lighter gray on hover */
+        transform: scale(1.05); /* Slight zoom effect */
+    }
+
+.btn-primary {
+    background-color: #007bff; /* Royal blue for primary buttons */
+    color: #ffffff; /* White text */
 }
 
-body {
-  margin-bottom: 60px;
+    .btn-primary:hover {
+        background-color: #0056b3; /* Darker royal blue on hover */
+        transform: scale(1.05); /* Slight zoom effect */
+    }
+
+.btn-danger {
+    background-color: #e74c3c; /* Soft red background */
+    color: white;
 }
+
+    .btn-danger:hover {
+        background-color: #c0392b; /* Darker red on hover */
+    }
