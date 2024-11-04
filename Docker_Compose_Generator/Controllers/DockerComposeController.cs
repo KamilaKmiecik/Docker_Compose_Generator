@@ -19,12 +19,44 @@ namespace Docker_Compose_Generator.Controllers
             _dockerComposeService = dockerComposeService;
         }
 
+        public IActionResult Create()
+        {
+            // Inicjalizujemy pusty obiekt DockerComposeCreateDto
+            var model = new DockerComposeCreateDto();
+            return View(model);
+        }
+
+        public IActionResult NetworkListPartial(List<NetworkDTO> model)
+        {
+            return PartialView("_NetworkListPartial", model ?? new List<NetworkDTO>());
+        }
+
+        public IActionResult ServiceListPartial(List<ServiceDto> model)
+        {
+            return PartialView("_ServiceListPartial", model ?? new List<ServiceDto>());
+        }
+
+        public IActionResult VolumeListPartial(List<VolumeDTO> model)
+        {
+            return PartialView("_VolumeListPartial", model ?? new List<VolumeDTO>());
+        }
+
+
+        [HttpPost]
+        public IActionResult Create(DockerComposeCreateDto model)
+        {
+            if (ModelState.IsValid)
+            {
+                return RedirectToAction("Success");
+            }
+            return View(model);
+        }
+
         // GET: DockerCompose/CreateUsingUI
         [HttpGet]
         public IActionResult CreateUsingUI()
         {
-            var model = new DockerComposeCreateDto(); // Nowy model do przekazania do widoku
-            return View(model);
+            return View();
         }
 
         // POST: DockerCompose/CreateUsingUI
@@ -34,14 +66,13 @@ namespace Docker_Compose_Generator.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View(model); // Jeśli model nie jest prawidłowy, zwróć widok z błędami
+                return View(model); 
             }
 
             try
             {
                 var yamlContent = _dockerComposeService.GenerateDockerComposeYaml(model);
 
-                // Zapisz YAML do pliku lub zwróć jako zawartość pliku
                 return File(System.Text.Encoding.UTF8.GetBytes(yamlContent), "application/octet-stream", "docker-compose.yml");
             }
             catch (Exception ex)
@@ -50,6 +81,7 @@ namespace Docker_Compose_Generator.Controllers
                 return View(model);
             }
         }
+
 
         [HttpGet]
         public IActionResult GetServicePartial(int index)
@@ -94,21 +126,19 @@ namespace Docker_Compose_Generator.Controllers
             return PartialView("AddNetworkPartial", networkDto);
         }
 
-        // GET: DockerCompose/GetPartial?type=service
         [HttpGet]
-        public IActionResult GetPartial(string type)
+        public IActionResult GetPartial(string type, int index)
         {
-            switch (type.ToLower())
+            ViewData["Index"] = index;
+
+            return type switch
             {
-                case "service":
-                    return PartialView("_ServicePartial", new ServiceDto() { Name = "", Image = ""}); // Nowy obiekt ServiceDto do częściowego widoku
-                case "network":
-                    return PartialView("_NetworkPartial", new NetworkDTO() { Name = ""}); // Nowy obiekt NetworkDTO do częściowego widoku
-                case "volume":
-                    return PartialView("_VolumePartial", new VolumeDTO() { Name = ""}); // Nowy obiekt VolumeDTO do częściowego widoku
-                default:
-                    return NotFound();
-            }
+                "service" => PartialView("_ServicePartial", new ServiceDto { Name = "", Image = "" }),
+                "network" => PartialView("_NetworkPartial", new NetworkDTO { Name = "" }),
+                "volume" => PartialView("_VolumePartial", new VolumeDTO { Name = "" }),
+                _ => BadRequest()
+            };
         }
+
     }
 }

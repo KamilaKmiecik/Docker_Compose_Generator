@@ -14,16 +14,17 @@ namespace Docker_Compose_Generator.Services
             {
                 { "version", model.Version },
                 { "services", new Dictionary<string, object>() },
-                { "volumes", GenerateVolumesSection(model.Volumes) },
-                { "networks", GenerateNetworksSection(model.Networks) }
+            //    { "volumes", GenerateVolumesSection(model.Volumes) },
+            //    { "networks", GenerateNetworksSection(model.Networks) }
             };
 
             var servicesDict = (Dictionary<string, object>)composeDict["services"];
 
-            foreach (var service in model.Services)
-            {
-                servicesDict[service.Name] = GenerateServiceSection(service);
-            }
+            if(model.Services != null && model.Services.Count > 0)
+                foreach (var service in model.Services)
+                {
+                    servicesDict[service.Name] = GenerateServiceSection(service);
+                }
 
             var serializer = new SerializerBuilder()
                 .WithNamingConvention(CamelCaseNamingConvention.Instance)

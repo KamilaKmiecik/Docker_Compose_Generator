@@ -18,7 +18,11 @@
             for (int i = 0; i < Model.Services.Count; i++)
             {
                 <div class="entry">
-                    <partial name="_ServicePartial" />
+                    @{
+                        var vd = new ViewDataDictionary(ViewData);
+                        vd.TemplateInfo.HtmlFieldPrefix = Html.NameFor(e => e.Services);
+                        @Html.Partial("_ServicePartial", Model.Services[i], vd);
+                    };
                     <button type="button" class="btn btn-danger remove-entry">Remove Service</button>
                 </div>
             }
@@ -33,10 +37,6 @@
             for (int i = 0; i < Model.Networks.Count; i++)
             {
                 <div class="entry">
-                    @Html.Partial("AddNetworkPartial", Model.Networks[i], new ViewDataDictionary(ViewData)
-            {
-            { "index", i }
-            })
                     <button type="button" class="btn btn-danger remove-entry">Remove Network</button>
                 </div>
             }
@@ -51,10 +51,6 @@
             for (int i = 0; i < Model.Volumes.Count; i++)
             {
                 <div class="entry">
-                    @Html.Partial("AddVolumePartial", Model.Volumes[i], new ViewDataDictionary(ViewData)
-            {
-            { "index", i }
-            })
                     <button type="button" class="btn btn-danger remove-entry">Remove Volume</button>
                 </div>
             }

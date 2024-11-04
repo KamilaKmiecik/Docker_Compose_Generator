@@ -1,0 +1,29 @@
+﻿@model List<Docker_Compose_Generator.Models.ServiceDto>
+
+<div id="services">
+    @for (int i = 0; i < Model.Count; i++)
+    {
+        <div>
+            <input asp-for="[@i].Name" placeholder="Service Name" />
+            <button type="button" onclick="removeService(this)">Remove</button>
+        </div>
+    }
+</div>
+<button type="button" onclick="addService()">Add Service</button>
+
+@section Scripts {
+    <script>
+        function addService() {
+            let container = document.getElementById("services");
+            let index = container.children.length;
+            let div = document.createElement("div");
+            div.innerHTML = `<input name="Services[${index}].Name" placeholder="Service Name" />
+                                     <button type="button" onclick="removeService(this)">Remove</button>`;
+            container.appendChild(div);
+        }
+
+        function removeService(button) {
+            button.parentElement.remove();
+        }
+    </script>
+}

@@ -1,0 +1,29 @@
+﻿@model List<Docker_Compose_Generator.Models.VolumeDTO>
+
+<div id="volumes">
+    @for (int i = 0; i < Model.Count; i++)
+    {
+        <div>
+            <input asp-for="[@i].Name" placeholder="Volume Name" />
+            <button type="button" onclick="removeVolume(this)">Remove</button>
+        </div>
+    }
+</div>
+<button type="button" onclick="addVolume()">Add Volume</button>
+
+@section Scripts {
+    <script>
+        function addVolume() {
+            let container = document.getElementById("volumes");
+            let index = container.children.length;
+            let div = document.createElement("div");
+            div.innerHTML = `<input name="Volumes[${index}].Name" placeholder="Volume Name" />
+                                     <button type="button" onclick="removeVolume(this)">Remove</button>`;
+            container.appendChild(div);
+        }
+
+        function removeVolume(button) {
+            button.parentElement.remove();
+        }
+    </script>
+}

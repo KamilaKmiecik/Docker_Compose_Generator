@@ -5,16 +5,10 @@ using Docker_Compose_Generator.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//builder.Services.AddScoped<IDockerComposeService, DockerComposeService>();
 builder.Services.AddServices();
 
-
-// Dodaj kontrolery i widoki
 builder.Services.AddControllersWithViews();
 
-//
-//builder.Services.AddDbContext<DockerComposeContext>(options =>
-//   options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 var app = builder.Build();
 

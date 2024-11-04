@@ -1,0 +1,29 @@
+﻿@model List<Docker_Compose_Generator.Models.NetworkDTO>
+
+<div id="networks">
+    @for (int i = 0; i < Model.Count; i++)
+    {
+        <div>
+            <input asp-for="[@i].Name" placeholder="Network Name" />
+            <button type="button" onclick="removeNetwork(this)">Remove</button>
+        </div>
+    }
+</div>
+<button type="button" onclick="addNetwork()">Add Network</button>
+
+@section Scripts {
+    <script>
+        function addNetwork() {
+            let container = document.getElementById("networks");
+            let index = container.children.length;
+            let div = document.createElement("div");
+            div.innerHTML = `<input name="Networks[${index}].Name" placeholder="Network Name" />
+                                     <button type="button" onclick="removeNetwork(this)">Remove</button>`;
+            container.appendChild(div);
+        }
+
+        function removeNetwork(button) {
+            button.parentElement.remove();
+        }
+    </script>
+}
