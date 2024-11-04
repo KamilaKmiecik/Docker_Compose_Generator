@@ -4,7 +4,7 @@
     public class VolumeEntity
     {
         public required string Name { get; set; }
-        public string? Driver { get; private set; }
+        public string? Driver { get;  set; }
         public string Target { get; set; }
         public Dictionary<string, string>? DriverOptions { get; private set; }
         public Dictionary<string, string>? Labels { get; private set; }
@@ -12,9 +12,9 @@
         public bool? ReadOnly { get; private set; }
         public string AccessMode { get; set; }
         public string Source { get; set; }
-        private VolumeEntity() { }
+        public VolumeEntity() { }
 
-        public static VolumeEntity Create(string name, string? driver = null, bool? external = false, bool? readOnly = false, string? target = null)
+        public static VolumeEntity Create(string name, string? driver = null, bool? external = false, bool? readOnly = false)
         {
             if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("Volume name cannot be empty");
 

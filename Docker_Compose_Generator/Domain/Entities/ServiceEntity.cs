@@ -29,9 +29,9 @@ public class ServiceEntity
     public required string Image { get; set; }
     public List<PortEntity> Ports { get; private set; } = new List<PortEntity>();
     public List<VolumeEntity> Volumes { get; private set; } = new List<VolumeEntity>();
-    public List<EnvironmentEntity> Environment { get; private set; } = new List<EnvironmentEntity>();
+    public List<EnvironmentEntity> Environment { get; set; } = new List<EnvironmentEntity>();
     public List<NetworkEntity> Networks { get; private set; } = new List<NetworkEntity>();
-    public RestartPolicyEntity? RestartPolicy { get; private set; }
+    public RestartPolicyEntity? RestartPolicy { get;  set; }
 
     public ServiceEntity() { }
 

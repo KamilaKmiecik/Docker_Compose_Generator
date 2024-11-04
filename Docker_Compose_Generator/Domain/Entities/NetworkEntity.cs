@@ -3,13 +3,13 @@
   public class NetworkEntity
 {
     public required string Name { get; set; }
-    public string? Driver { get; private set; }
+    public string? Driver { get;  set; }
     public bool? Internal { get; private set; }
     public bool? Attachable { get; private set; }
     public IPAMConfigurationEntity? Ipam { get; private set; }
-    public Dictionary<string, string>? DriverOptions { get; private set; }
+    public Dictionary<string, string>? DriverOptions { get; set; }
 
-    private NetworkEntity() { }
+    public NetworkEntity() { }
 
     public static NetworkEntity Create(string name, string? driver = null, bool? internalNetwork = false, bool? attachable = false)
     {
@@ -56,7 +56,7 @@ public class EnvironmentEntity
     public required string Key { get; set; }
     public required string Value { get; set; }
 
-    private EnvironmentEntity() { }
+    public EnvironmentEntity() { }
 
     public static EnvironmentEntity Create(string key, string value)
     {
@@ -70,10 +70,10 @@ public class EnvironmentEntity
 public class RestartPolicyEntity
 {
     public required string Condition { get; set; }
-    public int? MaxRetries { get; private set; }
-    public TimeSpan? Delay { get; private set; }
+    public int? MaxRetries { get;  set; }
+    public TimeSpan? Delay { get;  set; }
 
-    private RestartPolicyEntity() { }
+    public RestartPolicyEntity() { }
 
     public static RestartPolicyEntity Create(string condition, int? maxRetries = null, TimeSpan? delay = null)
     {
