@@ -9,7 +9,7 @@
    
         <div>
             <label asp-for="Version"></label>
-            <input asp-for="Version" class="form-control" />
+            <span class="form-control-static">@Model.Version</span>
             <span asp-validation-for="Version" class="text-danger"></span>
         </div>
 
