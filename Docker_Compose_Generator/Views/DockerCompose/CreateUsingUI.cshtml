@@ -6,94 +6,32 @@
     @Html.AntiForgeryToken()
 
     <div class="form-group">
-        <label asp-for="Version"></label>
-        <input asp-for="Version" class="form-control" required />
-        <span asp-validation-for="Version" class="text-danger"></span>
-    </div>
+   
+        <div>
+            <label asp-for="Version"></label>
+            <input asp-for="Version" class="form-control" />
+            <span asp-validation-for="Version" class="text-danger"></span>
+        </div>
 
-    <h3>Services</h3>
-    <div id="services-container">
-        @if (Model?.Services != null && Model.Services.Any())
-        {
-            for (int i = 0; i < Model.Services.Count; i++)
-            {
-                <div class="entry">
-                    <partial name="_ServicePartial" />
-                    <button type="button" class="btn btn-danger remove-entry">Remove Service</button>
-                </div>
-            }
-        }
-    </div>
-    <button type="button" class="btn btn-secondary add-entry" data-type="service">Add Service</button>
+        <h3>Services</h3>
+        <div id="services-container">
+        </div>
+        <button type="button" id="add-service" class="btn btn-primary">Add Service</button>
 
-    <h3>Networks</h3>
-    <div id="networks-container">
-        @if (Model?.Networks != null && Model.Networks.Any())
-        {
-            for (int i = 0; i < Model.Networks.Count; i++)
-            {
-                <div class="entry">
-                    @Html.Partial("AddNetworkPartial", Model.Networks[i], new ViewDataDictionary(ViewData)
-            {
-            { "index", i }
-            })
-                    <button type="button" class="btn btn-danger remove-entry">Remove Network</button>
-                </div>
-            }
-        }
-    </div>
-    <button type="button" class="btn btn-secondary add-entry" data-type="network">Add Network</button>
+        <h3>Networks</h3>
+        <div id="networks-container">
+        </div>
+        <button type="button" id="add-network" class="btn btn-primary">Add Network</button>
 
-    <h3>Volumes</h3>
-    <div id="volumes-container">
-        @if (Model?.Volumes != null && Model.Volumes.Any())
-        {
-            for (int i = 0; i < Model.Volumes.Count; i++)
-            {
-                <div class="entry">
-                    @Html.Partial("AddVolumePartial", Model.Volumes[i], new ViewDataDictionary(ViewData)
-            {
-            { "index", i }
-            })
-                    <button type="button" class="btn btn-danger remove-entry">Remove Volume</button>
-                </div>
-            }
-        }
-    </div>
-    <button type="button" class="btn btn-secondary add-entry" data-type="volume">Add Volume</button>
+        <h3>Volumes</h3>
+        <div id="volumes-container">
+        </div>
+        <button type="button" id="add-volume" class="btn btn-primary">Add Volume</button>
 
     <button type="submit" class="btn btn-primary">Generate Docker Compose</button>
 </form>
 
 @section Scripts {
+    @* <script src="~/js/site.js"></script> *@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            let serviceIndex = $('#services-container .entry').length;
-            let networkIndex = $('#networks-container .entry').length;
-            let volumeIndex = $('#volumes-container .entry').length;
-
-            $('.add-entry').click(function () {
-                var type = $(this).data('type');
-                var index;
-
-                if (type === 'service') index = serviceIndex++;
-                if (type === 'network') index = networkIndex++;
-                if (type === 'volume') index = volumeIndex++;
-
-                var partialViewName = "Add" + type.charAt(0).toUpperCase() + type.slice(1) + "Partial";
-
-                $.get('@Url.Action("GetPartial", "DockerCompose")', { type: type, index: index }, function (data) {
-                    var newEntryDiv = $('<div class="entry"></div>').append(data);
-                    $('#' + type + 's-container').append(newEntryDiv);
-                }).fail(function (xhr, status, error) {
-                    console.error("Error fetching partial:", status, error);
-                });
-            });
-
-            $(document).on('click', '.remove-entry', function () {
-                $(this).closest('.entry').remove();
-            });
-        });
-    </script>
 }
