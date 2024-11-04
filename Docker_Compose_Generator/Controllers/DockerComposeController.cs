@@ -34,14 +34,13 @@ namespace Docker_Compose_Generator.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View(model); // Jeśli model nie jest prawidłowy, zwróć widok z błędami
+                return View(model); 
             }
 
             try
             {
                 var yamlContent = _dockerComposeService.GenerateDockerComposeYaml(model);
 
-                // Zapisz YAML do pliku lub zwróć jako zawartość pliku
                 return File(System.Text.Encoding.UTF8.GetBytes(yamlContent), "application/octet-stream", "docker-compose.yml");
             }
             catch (Exception ex)
@@ -54,7 +53,7 @@ namespace Docker_Compose_Generator.Controllers
         [HttpGet]
         public IActionResult GetServicePartial(int index)
         {
-            var model = new ServiceDto() { Name = "", Image = ""}; 
+            var model = new ServiceDTO() { Name = "", Image = ""}; 
             ViewData["index"] = index;
             return PartialView("_ServicePartial", model);
         }
@@ -76,7 +75,7 @@ namespace Docker_Compose_Generator.Controllers
         }
 
 
-        public IActionResult GetServicePartial(int serviceIndex, ServiceDto portDto)
+        public IActionResult GetServicePartial(int serviceIndex, ServiceDTO portDto)
         {
             ViewData["serviceIndex"] = serviceIndex; // Przekazanie indeksu usługi do widoku
             return PartialView("AddPortPartial", portDto);
@@ -94,21 +93,6 @@ namespace Docker_Compose_Generator.Controllers
             return PartialView("AddNetworkPartial", networkDto);
         }
 
-        // GET: DockerCompose/GetPartial?type=service
-        [HttpGet]
-        public IActionResult GetPartial(string type)
-        {
-            switch (type.ToLower())
-            {
-                case "service":
-                    return PartialView("_ServicePartial", new ServiceDto() { Name = "", Image = ""}); // Nowy obiekt ServiceDto do częściowego widoku
-                case "network":
-                    return PartialView("_NetworkPartial", new NetworkDTO() { Name = ""}); // Nowy obiekt NetworkDTO do częściowego widoku
-                case "volume":
-                    return PartialView("_VolumePartial", new VolumeDTO() { Name = ""}); // Nowy obiekt VolumeDTO do częściowego widoku
-                default:
-                    return NotFound();
-            }
-        }
+     
     }
 }

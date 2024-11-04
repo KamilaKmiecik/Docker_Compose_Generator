@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Docker_Compose_Generator.Models;
 
-public class ServiceDto
+public class ServiceDTO
 {
     public required string Name { get; set; }
 
@@ -19,7 +19,7 @@ public class ServiceDto
     public RestartPolicy? RestartPolicy { get; set; }
 
 
-    public ServiceDto()
+    public ServiceDTO()
     {
             
     }
@@ -35,6 +35,10 @@ public class Port
 
 public class Volume : VolumeDTO
 {
+    public Volume()
+    {
+            
+    }
     public required string Source { get; set; }
     public required string Target { get; set; }
     public string? AccessMode { get; set; } = "rw";
