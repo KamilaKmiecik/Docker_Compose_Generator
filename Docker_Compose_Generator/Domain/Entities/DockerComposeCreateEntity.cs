@@ -1,7 +1,5 @@
 ﻿using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Docker_Compose_Generator.Domain.Entities
 {

@@ -6,11 +6,11 @@ public class VolumeDTO
 
     public string? Driver { get; set; }
 
-    public Dictionary<string, string>? DriverOptions { get; set; } 
+    public Dictionary<string, string>? DriverOptions { get; set; }
 
     public Dictionary<string, string>? Labels { get; set; }
 
-    public bool? External { get; set; } 
+    public bool? External { get; set; }
 
     public bool? ReadOnly { get; set; }
 
@@ -18,6 +18,6 @@ public class VolumeDTO
 
     public VolumeDTO()
     {
-            
+
     }
 }

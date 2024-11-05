@@ -1,6 +1,6 @@
 ﻿using YamlDotNet.Core;
-using YamlDotNet.Serialization.NamingConventions;
 using YamlDotNet.Serialization;
+using YamlDotNet.Serialization.NamingConventions;
 
 namespace Docker_Compose_Generator.Validation;
 

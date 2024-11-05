@@ -1,12 +1,9 @@
-using Xunit;
-using Moq;
 using AutoMapper;
-using FluentAssertions;
+using Docker_Compose_Generator.Domain.Entities;
 using Docker_Compose_Generator.Models;
 using Docker_Compose_Generator.Services;
-using Docker_Compose_Generator.Domain.Entities;
-using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
+using FluentAssertions;
+using Moq;
 using Environment = Docker_Compose_Generator.Models.Environment;
 
 namespace Docker_Compose_Generator_Tests

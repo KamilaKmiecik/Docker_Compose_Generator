@@ -1,7 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using System.ComponentModel.DataAnnotations;
-
-namespace Docker_Compose_Generator.Models;
+﻿namespace Docker_Compose_Generator.Models;
 
 public class ServiceDTO
 {
@@ -21,7 +18,7 @@ public class ServiceDTO
 
     public ServiceDTO()
     {
-            
+
     }
 }
 
@@ -37,7 +34,7 @@ public class Volume : VolumeDTO
 {
     public Volume()
     {
-            
+
     }
     public required string Source { get; set; }
     public required string Target { get; set; }
@@ -61,9 +58,9 @@ public class RestartPolicy
 {
     // "no", "always", "on-failure", "unless-stopped"
     public required string Condition { get; set; }
- 
+
     // tylko dla "on-failure"
-    public int? MaxRetries { get; set; }  
-    public TimeSpan? Delay { get; set; }  
+    public int? MaxRetries { get; set; }
+    public TimeSpan? Delay { get; set; }
 }
 

@@ -1,9 +1,9 @@
 ﻿namespace Docker_Compose_Generator.Domain.Entities;
 
-  public class NetworkEntity
+public class NetworkEntity
 {
     public required string Name { get; set; }
-    public string? Driver { get;  set; }
+    public string? Driver { get; set; }
     public bool? Internal { get; private set; }
     public bool? Attachable { get; private set; }
     public IPAMConfigurationEntity? Ipam { get; private set; }
@@ -70,8 +70,8 @@ public class EnvironmentEntity
 public class RestartPolicyEntity
 {
     public required string Condition { get; set; }
-    public int? MaxRetries { get;  set; }
-    public TimeSpan? Delay { get;  set; }
+    public int? MaxRetries { get; set; }
+    public TimeSpan? Delay { get; set; }
 
     public RestartPolicyEntity() { }
 

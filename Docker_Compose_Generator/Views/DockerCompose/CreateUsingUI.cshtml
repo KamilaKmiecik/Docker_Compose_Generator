@@ -5,14 +5,18 @@
 <form asp-action="CreateUsingUI" method="post">
     @Html.AntiForgeryToken()
 
-    <div class="form-group">
-   
+    @if (TempData["ErrorMessage"] !=null)
+          {
+    <script>
+        alert('@TempData["ErrorMessage"]');
+    </script>
+}
+
         <div>
             <label asp-for="Version"></label>
             <span class="form-control-static">@Model.Version</span>
             <span asp-validation-for="Version" class="text-danger"></span>
         </div>
-
         <h3>Services</h3>
         <div id="services-container">
         </div>

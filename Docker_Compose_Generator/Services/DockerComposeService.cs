@@ -1,11 +1,9 @@
-﻿using Docker_Compose_Generator.Models;
-using YamlDotNet.Serialization.NamingConventions;
-using YamlDotNet.Serialization;
-using Microsoft.AspNetCore.Mvc;
-using AutoMapper;
-using System.Collections.Generic;
-using System.Linq;
+﻿using AutoMapper;
 using Docker_Compose_Generator.Domain.Entities;
+using Docker_Compose_Generator.Models;
+using Microsoft.AspNetCore.Mvc;
+using YamlDotNet.Serialization;
+using YamlDotNet.Serialization.NamingConventions;
 
 namespace Docker_Compose_Generator.Services
 {

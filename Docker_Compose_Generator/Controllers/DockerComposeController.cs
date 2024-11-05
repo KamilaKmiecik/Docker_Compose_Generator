@@ -1,12 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Docker_Compose_Generator.Models;
+﻿using Docker_Compose_Generator.Models;
 using Docker_Compose_Generator.Services;
-using System;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using YamlDotNet.Serialization;
-using YamlDotNet.Serialization.NamingConventions;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Docker_Compose_Generator.Controllers
 {
@@ -32,10 +26,10 @@ namespace Docker_Compose_Generator.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateUsingUI(DockerComposeCreateDto model)
         {
-            if (!ModelState.IsValid)
-            {
-                return View(model); 
-            }
+                //if (!ModelState.IsValid)
+                //{
+                //    return View(model); 
+                //}
 
             try
             {
@@ -45,7 +39,8 @@ namespace Docker_Compose_Generator.Controllers
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError("Error", $"An error occurred: {ex.Message}");
+                TempData["ErrorMessage"] = ex.InnerException.Message;
+                // ModelState.AddModelError("Error", $"An error occurred: {ex.Message}");
                 return View(model);
             }
         }
@@ -53,7 +48,7 @@ namespace Docker_Compose_Generator.Controllers
         [HttpGet]
         public IActionResult GetServicePartial(int index)
         {
-            var model = new ServiceDTO() { Name = "", Image = ""}; 
+            var model = new ServiceDTO() { Name = "", Image = "" };
             ViewData["index"] = index;
             return PartialView("_ServicePartial", model);
         }
@@ -69,7 +64,7 @@ namespace Docker_Compose_Generator.Controllers
         [HttpGet]
         public IActionResult GetVolumePartial(int index)
         {
-            var model = new VolumeDTO() { Name = "" }; 
+            var model = new VolumeDTO() { Name = "" };
             ViewData["index"] = index;
             return PartialView("_VolumePartial", model);
         }
@@ -93,6 +88,6 @@ namespace Docker_Compose_Generator.Controllers
             return PartialView("AddNetworkPartial", networkDto);
         }
 
-     
+
     }
 }

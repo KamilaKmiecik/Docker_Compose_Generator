@@ -1,28 +1,104 @@
+/* Global Styles */
+html {
+    font-size: 14px;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    margin-bottom: 60px;
+    font-family: 'Arial', sans-serif;
+    background-color: #121212; /* Very dark background */
+    color: #e0e0e0; /* Light gray for text */
+    line-height: 1.6; /* Improved line spacing */
+}
+
+/* Container Styles */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem;
+}
+
+/* Header Styles */
+h1, h2, h3, h4 {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+h1 {
+    font-size: 2.5rem;
+    color: #ffffff; /* Bright white for main headings */
+}
+
+h2 {
+    font-size: 2rem;
+    color: rgba(52, 152, 219, 0.5); /* Teal for secondary headings */
+}
+
+h3 {
+    font-size: 1.75rem;
+    color: #bdc3c7; /* Lighter gray for smaller headings */
+}
+
+h4 {
+    font-size: 1.5rem;
+    color: #95a5a6; /* Soft gray for smaller headings */
+}
+
+/* Form Styles */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    color: #ffffff; /* White label color */
+}
+
+input[type="text"],
+input[type="number"],
+input[type="checkbox"] {
+    width: 100%;
+    padding: 0.75rem; /* Increased padding for inputs */
+    border: 1px solid #444; /* Dark border color */
+    border-radius: 0.25rem;
+    background-color: #2c2c2c; /* Darker input background */
+    color: #ffffff; /* White text for inputs */
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+    input[type="text"]:focus,
+    input[type="number"]:focus {
+        border-color: #3498db; /* Light blue border color on focus */
+        box-shadow: 0 0 5px rgba(52, 152, 219, 0.5); /* Shadow effect */
+    }
+
 /* Button Styles */
 .btn {
     padding: 0.5rem 1rem;
     border-radius: 0.25rem;
     transition: background-color 0.3s, transform 0.2s; /* Added transform for hover effect */
-    font-weight: bold; /* Make button text bold */
 }
 
 .btn-secondary {
-    background-color: #4b4b4b; /* Medium gray for secondary buttons */
+    background-color: #2e2e2e; /* Dark gray background */
     color: #ffffff; /* White text */
 }
 
     .btn-secondary:hover {
-        background-color: #6b6b6b; /* Lighter gray on hover */
-        transform: scale(1.05); /* Slight zoom effect */
-    }
-
-.btn-primary {
-    background-color: #007bff; /* Royal blue for primary buttons */
-    color: #ffffff; /* White text */
-}
-
-    .btn-primary:hover {
-        background-color: #0056b3; /* Darker royal blue on hover */
+        background-color: #444444; /* Slightly lighter gray on hover */
         transform: scale(1.05); /* Slight zoom effect */
     }
 
@@ -34,3 +110,48 @@
     .btn-danger:hover {
         background-color: #c0392b; /* Darker red on hover */
     }
+
+/* Item Styles */
+.volume-item,
+.network-item,
+.service-item {
+    background: #1f1f1f; /* Darker item background */
+    padding: 1rem;
+    border: 1px solid #444; /* Dark border for items */
+    border-radius: 0.25rem;
+    margin-bottom: 1rem; /* Space between items */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+/* Accent Colors for Status Bars */
+.accent {
+    height: 5px;
+    border-radius: 2px;
+}
+
+.status-new {
+    background-color: #3498db; /* Blue for new issues */
+}
+
+.status-in-progress {
+    background-color: #f39c12; /* Orange for in-progress */
+}
+
+.status-closed {
+    background-color: #2ecc71; /* Green for closed */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding: 0.5rem; /* Reduce padding on smaller screens */
+    }
+
+    h1 {
+        font-size: 2rem; /* Reduce font size on small screens */
+    }
+
+    h2, h3, h4 {
+        font-size: 1.5rem; /* Reduce font size on small screens */
+    }
+}

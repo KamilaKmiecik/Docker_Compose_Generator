@@ -1,5 +1,3 @@
-using Docker_Compose_Generator.Services;
-using Microsoft.EntityFrameworkCore;
 using Docker_Compose_Generator.Extensions;
 
 

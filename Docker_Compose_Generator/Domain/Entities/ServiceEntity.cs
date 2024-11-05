@@ -1,8 +1,4 @@
-﻿using Docker_Compose_Generator.Domain.Entities;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace Docker_Compose_Generator.Domain.Entities;
+﻿namespace Docker_Compose_Generator.Domain.Entities;
 
 
 
@@ -31,14 +27,14 @@ public class ServiceEntity
     public List<VolumeEntity> Volumes { get; private set; } = new List<VolumeEntity>();
     public List<EnvironmentEntity> Environment { get; set; } = new List<EnvironmentEntity>();
     public List<NetworkEntity> Networks { get; private set; } = new List<NetworkEntity>();
-    public RestartPolicyEntity? RestartPolicy { get;  set; }
+    public RestartPolicyEntity? RestartPolicy { get; set; }
 
     public ServiceEntity() { }
 
     public static ServiceEntity Create(string name, string image)
     {
-        if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("Name cannot be empty");
-        if (string.IsNullOrWhiteSpace(image)) throw new ArgumentException("Image cannot be empty");
+        if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("Service name cannot be empty");
+        if (string.IsNullOrWhiteSpace(image)) throw new ArgumentException("Service image cannot be empty");
 
         return new ServiceEntity { Name = name, Image = image };
     }

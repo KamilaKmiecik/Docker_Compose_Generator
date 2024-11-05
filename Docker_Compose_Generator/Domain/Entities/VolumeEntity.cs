@@ -4,7 +4,7 @@
     public class VolumeEntity
     {
         public required string Name { get; set; }
-        public string? Driver { get;  set; }
+        public string? Driver { get; set; }
         public string Target { get; set; }
         public Dictionary<string, string>? DriverOptions { get; private set; }
         public Dictionary<string, string>? Labels { get; private set; }

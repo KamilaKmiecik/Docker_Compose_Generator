@@ -1,6 +1,6 @@
 ﻿$(document).ready(function () {
 
-    // Dodawanie nowego woluminu
+    // Dodawanie nowego woluminu w sekcji głównej wolumenów
     $('#add-volume').on('click', function () {
         let volumeIndex = $('#volumes-container .volume-item').length;
         let newVolume = `<div class="volume-item" data-index="${volumeIndex}">
@@ -38,6 +38,28 @@
         $('#volumes-container').append(newVolume);
     });
 
+    // Dodawanie woluminu tylko z polem Name w sekcji usług
+    $('#services-container').on('click', '.add-volume-btn', function () {
+        const serviceIndex = $(this).data('service-index');
+        const volumesContainer = $(`#volumes-container-${serviceIndex}`);
+        const volumeIndex = volumesContainer.children('.volume').length;
+
+        let volumeDiv = `<div class="volume">
+                            <input type="text" name="Services[${serviceIndex}].Volumes[${volumeIndex}]" placeholder="Volume Name" class="form-control" />
+                            <button type="button" class="remove-volume-btn btn btn-danger">Remove Volume</button>
+                        </div>`;
+        volumesContainer.append(volumeDiv);
+    });
+
+    // Usuwanie woluminu w sekcji głównej wolumenów
+    $('#volumes-container').on('click', '.remove-volume-btn', function () {
+        $(this).closest('.volume-item').remove();
+    });
+
+    // Usuwanie woluminu w sekcji usług
+    $('#services-container').on('click', '.remove-volume-btn', function () {
+        $(this).closest('.volume').remove();
+    });
     // Dodawanie Driver Option
     $('#volumes-container').on('click', '.add-driver-option-btn', function () {
         const volumeIndex = $(this).data('volume-index');
@@ -285,20 +307,7 @@
         $(this).closest('.network-item').remove();
     });
 
-    // Add Volume
-    $('#add-volume').on('click', function () {
-        let volumeIndex = $('#volumes-container .volume-item').length;
-        let newVolume = `<div class="volume-item" data-index="${volumeIndex}">
-                                            <h4>Volume ${volumeIndex}</h4>
-                                            <div>
-                                                <label for="Volumes_${volumeIndex}__Name">Name</label>
-                                                <input id="Volumes_${volumeIndex}__Name" name="Volumes[${volumeIndex}].Name" class="form-control" />
-                                            </div>
-                                            <button type="button" class="remove-volume btn btn-danger">Remove Volume</button>
-                                          </div>`;
-        $('#volumes-container').append(newVolume);
-    });
-
+   
     // Remove Volume
     $('#volumes-container').on('click', '.remove-volume', function () {
         $(this).closest('.volume-item').remove();
