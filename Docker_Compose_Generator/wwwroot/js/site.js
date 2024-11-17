@@ -103,46 +103,6 @@
         $(this).closest('.label').remove();
     });
 
-    $('#add-network').on('click', function () {
-        let networkIndex = $('#networks-container .network-item').length;
-        let newNetwork = `<div class="network-item" data-index="${networkIndex}">
-                                            <h4>Network ${networkIndex}</h4>
-                                            <div class="form-group">
-                                                <label for="Networks_${networkIndex}__Name">Name</label>
-                                                <input id="Networks_${networkIndex}__Name" name="Networks[${networkIndex}].Name" class="form-control" />
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="Networks_${networkIndex}__Driver">Driver</label>
-                                                <input id="Networks_${networkIndex}__Driver" name="Networks[${networkIndex}].Driver" class="form-control" />
-                                            </div>
-                                            <div class="form-group">
-                                                <label>IPAM Driver</label>
-                                                <input type="text" name="Networks[${networkIndex}].Ipam.Driver" class="form-control" />
-                                            </div>
-                                            <div class="form-group">
-                                                <label>IPAM Configuration</label>
-                                                <div id="ipam-config-container-${networkIndex}"></div>
-                                                <button type="button" class="btn btn-secondary add-ipam-config-btn" data-network-index="${networkIndex}">Add IPAM Config</button>
-                                            </div>
-                                            <div class="form-group">
-                                                <label>Driver Options</label>
-                                                <div id="driver-options-container-${networkIndex}"></div>
-                                                <button type="button" class="btn btn-secondary add-driver-option-btn" data-network-index="${networkIndex}">Add Driver Option</button>
-                                            </div>
-                                            <div class="form-group">
-                                                <label>Internal</label>
-                                                <input type="checkbox" name="Networks[${networkIndex}].Internal" value="true" />
-                                                <input type="hidden" name="Networks[${networkIndex}].Internal" value="false" />
-                                            </div>
-                                            <div class="form-group">
-                                                <label>Attachable</label>
-                                                <input type="checkbox" name="Networks[${networkIndex}].Attachable" value="true" />
-                                                <input type="hidden" name="Networks[${networkIndex}].Attachable" value="false" />
-                                            </div>
-                                            <button type="button" class="btn btn-danger remove-network-btn">Remove Network</button>
-                                        </div>`;
-        $('#networks-container').append(newNetwork);
-    });
 
     // Dodawanie IPAM Configuration
     $('#networks-container').on('click', '.add-ipam-config-btn', function () {
@@ -288,17 +248,48 @@
     $('#services-container').on('click', '.remove-network-btn', function () {
         $(this).closest('.network').remove();
     });
-    // Add Network
+    
+
+    // Add Network in global networks container
     $('#add-network').on('click', function () {
         let networkIndex = $('#networks-container .network-item').length;
         let newNetwork = `<div class="network-item" data-index="${networkIndex}">
-                                            <h4>Network ${networkIndex}</h4>
-                                            <div>
-                                                <label for="Networks_${networkIndex}__Name">Name</label>
-                                                <input id="Networks_${networkIndex}__Name" name="Networks[${networkIndex}].Name" class="form-control" />
-                                            </div>
-                                            <button type="button" class="remove-network btn btn-danger">Remove Network</button>
-                                          </div>`;
+                          <h4>Network ${networkIndex}</h4>
+                          <div class="form-group">
+                              <label for="Networks_${networkIndex}__Name">Name</label>
+                              <input id="Networks_${networkIndex}__Name" name="Networks[${networkIndex}].Name" class="form-control" />
+                          </div>
+                          <div class="form-group">
+                              <label for="Networks_${networkIndex}__Driver">Driver</label>
+                              <input id="Networks_${networkIndex}__Driver" name="Networks[${networkIndex}].Driver" class="form-control" />
+                          </div>
+                          <div class="form-group">
+                              <label>IPAM Driver</label>
+                              <input type="text" name="Networks[${networkIndex}].Ipam.Driver" class="form-control" />
+                          </div>
+                          <div class="form-group">
+                              <label>IPAM Configuration</label>
+                              <div id="ipam-config-container-${networkIndex}"></div>
+                              <button type="button" class="btn btn-secondary add-ipam-config-btn" data-network-index="${networkIndex}">Add IPAM Config</button>
+                          </div>
+                          <div class="form-group">
+                              <label>Driver Options</label>
+                              <div id="driver-options-container-${networkIndex}"></div>
+                              <button type="button" class="btn btn-secondary add-driver-option-btn" data-network-index="${networkIndex}">Add Driver Option</button>
+                          </div>
+                          <div class="form-group">
+                              <label>Internal</label>
+                              <input type="checkbox" name="Networks[${networkIndex}].Internal" value="true" />
+                              <input type="hidden" name="Networks[${networkIndex}].Internal" value="false" />
+                          </div>
+                          <div class="form-group">
+                              <label>Attachable</label>
+                              <input type="checkbox" name="Networks[${networkIndex}].Attachable" value="true" />
+                              <input type="hidden" name="Networks[${networkIndex}].Attachable" value="false" />
+                              <input type="hidden" name="Networks[${networkIndex}].Attachable" value="false" />
+                          </div>
+                          <button type="button" class="btn btn-danger remove-network-btn">Remove Network</button>
+                      </div>`;
         $('#networks-container').append(newNetwork);
     });
 
