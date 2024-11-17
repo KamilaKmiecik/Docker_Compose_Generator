@@ -248,7 +248,7 @@
     $('#services-container').on('click', '.remove-network-btn', function () {
         $(this).closest('.network').remove();
     });
-    
+
 
     // Add Network in global networks container
     $('#add-network').on('click', function () {
@@ -298,7 +298,7 @@
         $(this).closest('.network-item').remove();
     });
 
-   
+
     // Remove Volume
     $('#volumes-container').on('click', '.remove-volume', function () {
         $(this).closest('.volume-item').remove();
