@@ -3,10 +3,16 @@ using Docker_Compose_Generator.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddDistributedMemoryCache(); // Dodaj pamiêæ podrêczn¹
+
+builder.Services.AddSession(options =>
+{
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
 builder.Services.AddAutoMapper(typeof(Program));
 //builder.Services.AddScoped<IDockerComposeService, DockerComposeService>();
 builder.Services.AddServices();
-
 
 // Dodaj kontrolery i widoki
 builder.Services.AddControllersWithViews();
@@ -17,6 +23,7 @@ builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
+app.UseSession();
 
 if (!app.Environment.IsDevelopment())
 {

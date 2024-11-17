@@ -1,4 +1,7 @@
-﻿namespace Docker_Compose_Generator.Domain.Entities;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Xml.Linq;
+
+namespace Docker_Compose_Generator.Domain.Entities;
 
 
 
@@ -19,7 +22,7 @@ public class PortEntity
     }
 }
 
-public class ServiceEntity
+public class ServiceEntity : IValidatableObject
 {
     public required string Name { get; set; }
     public required string Image { get; set; }
@@ -31,10 +34,16 @@ public class ServiceEntity
 
     public ServiceEntity() { }
 
+    public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+    {
+        if (string.IsNullOrWhiteSpace(Name)) yield return new ValidationResult("Service name cannot be empty");
+        if (string.IsNullOrWhiteSpace(Image)) yield return new ValidationResult("Service image cannot be empty");
+    }
+
     public static ServiceEntity Create(string name, string image)
     {
-        if (string.IsNullOrWhiteSpace(name))  throw new ArgumentException("Service name cannot be empty");
-        if (string.IsNullOrWhiteSpace(image))  throw new ArgumentException("Service image cannot be empty");
+        if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("Service name cannot be empty");
+        if (string.IsNullOrWhiteSpace(image)) throw new ArgumentException("Service image cannot be empty");
 
         return new ServiceEntity { Name = name, Image = image };
     }

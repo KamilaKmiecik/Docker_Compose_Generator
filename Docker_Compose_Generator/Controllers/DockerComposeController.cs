@@ -1,6 +1,8 @@
-﻿using Docker_Compose_Generator.Models;
+﻿using Docker_Compose_Generator.Extensions;
+using Docker_Compose_Generator.Models;
 using Docker_Compose_Generator.Services;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace Docker_Compose_Generator.Controllers
 {
@@ -13,12 +15,16 @@ namespace Docker_Compose_Generator.Controllers
             _dockerComposeService = dockerComposeService;
         }
 
-       // GET: DockerCompose/CreateUsingUI
+        // GET: DockerCompose/CreateUsingUI
         public IActionResult CreateUsingUI()
         {
-            var model = new DockerComposeCreateDto();
-            if (TempData["DockerConfig"] != null && TempData["DockerConfig"] is DockerComposeCreateDto)
-                model = TempData["DockerConfig"] as DockerComposeCreateDto;
+            var model = HttpContext.Session.GetObjectFromJson<DockerComposeCreateDto>("DockerComposeModel");
+
+            if (model == null)
+            {
+                model = new DockerComposeCreateDto();
+            }
+
             return View(model);
         }
 
@@ -27,6 +33,7 @@ namespace Docker_Compose_Generator.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateUsingUI(DockerComposeCreateDto model)
         {
+            HttpContext.Session.SetObjectAsJson("DockerComposeModel", model);
 
             try
             {
@@ -36,9 +43,8 @@ namespace Docker_Compose_Generator.Controllers
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = ex.InnerException.Message;
-                TempData["DockerConfig"] = model; 
-                return View(model);
+                ModelState.AddModelError("Error", $"An error occurred: {ex.Message}");
+                return View(model); 
             }
         }
 
@@ -65,26 +71,5 @@ namespace Docker_Compose_Generator.Controllers
             ViewData["index"] = index;
             return PartialView("_VolumePartial", model);
         }
-
-
-        public IActionResult GetServicePartial(int serviceIndex, ServiceDTO portDto)
-        {
-            ViewData["serviceIndex"] = serviceIndex; // Przekazanie indeksu usługi do widoku
-            return PartialView("AddPortPartial", portDto);
-        }
-
-
-        public IActionResult GetVolumePartial(VolumeDTO volumeDto)
-        {
-            return PartialView("AddVolumePartial", volumeDto);
-        }
-
-
-        public IActionResult GetNetworkPartial(NetworkDTO networkDto)
-        {
-            return PartialView("AddNetworkPartial", networkDto);
-        }
-
-
     }
 }
