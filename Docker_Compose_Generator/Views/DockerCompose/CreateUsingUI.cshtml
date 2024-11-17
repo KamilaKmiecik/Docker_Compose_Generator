@@ -1,48 +1,48 @@
-﻿@model Docker_Compose_Generator.Models.DockerComposeCreateDto
-
-
-<h2>Create Docker Compose File</h2>
+﻿added @using Newtonsoft.Json;
+@{
+    var model = TempData["DockerComposeModel"] != null
+        ? JsonConvert.DeserializeObject<DockerComposeCreateDto>(TempData["DockerComposeModel"].ToString())
+        : new DockerComposeCreateDto();
+}
 
 <form asp-action="CreateUsingUI" method="post">
     @Html.AntiForgeryToken()
 
-  @*   @if (TempData["ErrorMessage"] !=null)
-          {
-    <script>
-        alert('@TempData["ErrorMessage"]');
-    </script>
-}
- *@
     @if (TempData["ErrorMessage"] != null)
     {
-        <div class="alert alert-danger">
-            @TempData["ErrorMessage"]
-        </div>
+        <script>
+            alert('@TempData["ErrorMessage"]');
+        </script>
     }
-        <div>
-            <label asp-for="Version"></label>
-            <span class="form-control-static">@Model.Version</span>
-            <span asp-validation-for="Version" class="text-danger"></span>
-        </div>
-        <h3>Services</h3>
-        <div id="services-container">
-        </div>
-        <button type="button" id="add-service" class="btn btn-primary">Add Service</button>
 
-        <h3>Networks</h3>
-        <div id="networks-container">
-        </div>
-        <button type="button" id="add-network" class="btn btn-primary">Add Network</button>
+    <div>
+      @*   <label asp-for="Version"></label>
+        <span class="form-control-static">@Model.Version</span>
+        <span asp-validation-for="Version" class="text-danger"></span> *@
+    </div>
 
-        <h3>Volumes</h3>
-        <div id="volumes-container">
-        </div>
-        <button type="button" id="add-volume" class="btn btn-primary">Add Volume</button>
+    <div>
+        <span class="form-control-static">Version 3.8</span>
+    </div>
+
+    <h3>Services</h3>
+    <div id="services-container">
+    </div>
+    <button type="button" id="add-service" class="btn btn-primary">Add Service</button>
+
+    <h3>Networks</h3>
+    <div id="networks-container">
+    </div>
+    <button type="button" id="add-network" class="btn btn-primary">Add Network</button>
+
+    <h3>Volumes</h3>
+    <div id="volumes-container">
+    </div>
+    <button type="button" id="add-volume" class="btn btn-primary">Add Volume</button>
 
     <button type="submit" class="btn btn-primary">Generate Docker Compose</button>
 </form>
 
 @section Scripts {
-    @* <script src="~/js/site.js"></script> *@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 }
