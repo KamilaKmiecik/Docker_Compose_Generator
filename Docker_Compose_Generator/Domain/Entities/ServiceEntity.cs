@@ -33,8 +33,8 @@ public class ServiceEntity
 
     public static ServiceEntity Create(string name, string image)
     {
-        if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("Service name cannot be empty");
-        if (string.IsNullOrWhiteSpace(image)) throw new ArgumentException("Service image cannot be empty");
+        if (string.IsNullOrWhiteSpace(name))  throw new ArgumentException("Service name cannot be empty");
+        if (string.IsNullOrWhiteSpace(image))  throw new ArgumentException("Service image cannot be empty");
 
         return new ServiceEntity { Name = name, Image = image };
     }

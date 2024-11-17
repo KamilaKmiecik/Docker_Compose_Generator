@@ -13,11 +13,12 @@ namespace Docker_Compose_Generator.Controllers
             _dockerComposeService = dockerComposeService;
         }
 
-        // GET: DockerCompose/CreateUsingUI
-        [HttpGet]
+       // GET: DockerCompose/CreateUsingUI
         public IActionResult CreateUsingUI()
         {
-            var model = new DockerComposeCreateDto(); // Nowy model do przekazania do widoku
+            var model = new DockerComposeCreateDto();
+            if (TempData["DockerConfig"] != null && TempData["DockerConfig"] is DockerComposeCreateDto)
+                model = TempData["DockerConfig"] as DockerComposeCreateDto;
             return View(model);
         }
 
@@ -26,10 +27,6 @@ namespace Docker_Compose_Generator.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateUsingUI(DockerComposeCreateDto model)
         {
-                //if (!ModelState.IsValid)
-                //{
-                //    return View(model); 
-                //}
 
             try
             {
@@ -40,7 +37,7 @@ namespace Docker_Compose_Generator.Controllers
             catch (Exception ex)
             {
                 TempData["ErrorMessage"] = ex.InnerException.Message;
-                // ModelState.AddModelError("Error", $"An error occurred: {ex.Message}");
+                TempData["DockerConfig"] = model; 
                 return View(model);
             }
         }

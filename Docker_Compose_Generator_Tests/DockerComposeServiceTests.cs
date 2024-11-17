@@ -1,231 +1,390 @@
-using AutoMapper;
-using Docker_Compose_Generator.Domain.Entities;
+using Xunit;
+using Moq;
+using Docker_Compose_Generator.Controllers;
 using Docker_Compose_Generator.Models;
 using Docker_Compose_Generator.Services;
-using FluentAssertions;
-using Moq;
-using Environment = Docker_Compose_Generator.Models.Environment;
+using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
-namespace Docker_Compose_Generator_Tests
+public class DockerComposeControllerTests
 {
-    public class DockerComposeServiceTests
+    private readonly Mock<IDockerComposeService> _dockerComposeServiceMock;
+    private readonly DockerComposeController _controller;
+
+    public DockerComposeControllerTests()
     {
-        private readonly Mock<IMapper> _mapperMock;
-        private readonly DockerComposeService _service;
+        _dockerComposeServiceMock = new Mock<IDockerComposeService>();
+        _controller = new DockerComposeController(_dockerComposeServiceMock.Object);
+    }
 
-        public DockerComposeServiceTests()
+    [Fact]
+    public async Task CreateUsingUI_Post_ShouldReturnFile_WhenModelHasServices()
+    {
+        // Arrange
+        var model = new DockerComposeCreateDto
         {
-            _mapperMock = new Mock<IMapper>();
-            _service = new DockerComposeService(_mapperMock.Object);
-        }
+            Services = new List<ServiceDTO> { new ServiceDTO { Name = "web", Image = "nginx" } }
+        };
+        var yamlContent = "version: '3'\nservices:\n  web:\n    image: nginx";
+        _dockerComposeServiceMock.Setup(service => service.GenerateDockerComposeYaml(It.IsAny<DockerComposeCreateDto>())).Returns(yamlContent);
 
-        [Fact]
-        public void GenerateDockerComposeYaml_ShouldGenerateYamlCorrectly()
+        // Act
+        var result = await _controller.CreateUsingUI(model);
+
+        // Assert
+        var fileResult = Assert.IsType<FileContentResult>(result);
+        Assert.Equal("docker-compose.yml", fileResult.FileDownloadName);
+        Assert.Contains("web", System.Text.Encoding.UTF8.GetString(fileResult.FileContents));
+    }
+
+    [Fact]
+    public async Task CreateUsingUI_Post_ShouldHandleEmptyModelCorrectly()
+    {
+        // Arrange
+        var model = new DockerComposeCreateDto();
+        var yamlContent = "version: '3'\nservices: []";
+        _dockerComposeServiceMock.Setup(service => service.GenerateDockerComposeYaml(It.IsAny<DockerComposeCreateDto>())).Returns(yamlContent);
+
+        // Act
+        var result = await _controller.CreateUsingUI(model);
+
+        // Assert
+        var fileResult = Assert.IsType<FileContentResult>(result);
+        Assert.Equal("docker-compose.yml", fileResult.FileDownloadName);
+        Assert.Contains("services: []", System.Text.Encoding.UTF8.GetString(fileResult.FileContents));
+    }
+
+    [Fact]
+    public async Task CreateUsingUI_Post_ShouldHandleInvalidDockerComposeCreateDto()
+    {
+        // Arrange
+        var model = new DockerComposeCreateDto();
+        _dockerComposeServiceMock.Setup(service => service.GenerateDockerComposeYaml(It.IsAny<DockerComposeCreateDto>())).Throws(new ArgumentException("Invalid data"));
+
+        // Act
+        var result = await _controller.CreateUsingUI(model);
+
+        // Assert
+        var viewResult = Assert.IsType<ViewResult>(result);
+        Assert.Equal(model, viewResult.Model);
+        Assert.Equal("Invalid data", _controller.TempData["ErrorMessage"]);
+    }
+
+    [Fact]
+    public async Task CreateUsingUI_Post_ShouldHandleServiceException()
+    {
+        // Arrange
+        var model = new DockerComposeCreateDto();
+        _dockerComposeServiceMock.Setup(service => service.GenerateDockerComposeYaml(It.IsAny<DockerComposeCreateDto>())).Throws(new Exception("Service error"));
+
+        // Act
+        var result = await _controller.CreateUsingUI(model);
+
+        // Assert
+        var viewResult = Assert.IsType<ViewResult>(result);
+        Assert.Equal(model, viewResult.Model);
+        Assert.Equal("Service error", _controller.TempData["ErrorMessage"]);
+    }
+
+    [Fact]
+    public async Task CreateUsingUI_Post_ShouldReturnFile_WhenMultipleNetworksExist()
+    {
+        // Arrange
+        var model = new DockerComposeCreateDto
         {
-            // Arrange
-            var dto = new DockerComposeCreateDto
-            {
-                //Version = "3.8",
-                Services = new List<ServiceDTO>
-                {
-                    new ServiceDTO { Name = "web", Image = "nginx:latest" }
-                },
-                Volumes = new List<VolumeDTO>(),
-                Networks = new List<NetworkDTO>()
-            };
-
-            var serviceEntities = new List<ServiceEntity>
-            {
-                new ServiceEntity { Name = "web", Image = "nginx:latest" }
-            };
-
-            _mapperMock.Setup(m => m.Map<List<ServiceEntity>>(dto.Services)).Returns(serviceEntities);
-
-            // Act
-            var result = _service.GenerateDockerComposeYaml(dto);
-
-            // Assert
-            result.Should().Contain("version: 3.8");
-            result.Should().Contain("services:");
-            result.Should().Contain("web:");
-            result.Should().Contain("image: nginx:latest");
-        }
-
-
-        [Fact]
-        public void GenerateDockerComposeYaml_ShouldGenerateYamlWithVolumes()
+            Networks = new List<NetworkDTO>
         {
-            // Arrange
-            var dto = new DockerComposeCreateDto
-            {
-                Services = new List<ServiceDTO>
-                {
-                    new ServiceDTO { Name = "web", Image = "nginx:latest" }
-                },
-                Volumes = new List<VolumeDTO>
-                {
-                    new VolumeDTO { Name = "my-volume", Driver = "local" }
-                },
-                Networks = new List<NetworkDTO>()
-            };
-
-            var serviceEntities = new List<ServiceEntity>
-            {
-                new ServiceEntity { Name = "web", Image = "nginx:latest" }
-            };
-
-            var volumeEntities = new List<VolumeEntity>
-            {
-                new VolumeEntity { Name = "my-volume", Driver = "local" }
-            };
-
-            _mapperMock.Setup(m => m.Map<List<ServiceEntity>>(dto.Services)).Returns(serviceEntities);
-            _mapperMock.Setup(m => m.Map<List<VolumeEntity>>(dto.Volumes)).Returns(volumeEntities);
-
-            // Act
-            var result = _service.GenerateDockerComposeYaml(dto);
-
-            // Assert
-            result.Should().Contain("volumes:");
-            result.Should().Contain("my-volume:");
-            result.Should().Contain("driver: local");
+            new NetworkDTO { Name = "frontend" },
+            new NetworkDTO { Name = "backend" }
         }
+        };
+        var yamlContent = "version: '3'\nnetworks:\n  frontend:\n  backend:\n";
+        _dockerComposeServiceMock.Setup(service => service.GenerateDockerComposeYaml(It.IsAny<DockerComposeCreateDto>())).Returns(yamlContent);
 
-        [Fact]
-        public void GenerateDockerComposeYaml_ShouldGenerateYamlWithNetworks()
+        // Act
+        var result = await _controller.CreateUsingUI(model);
+
+        // Assert
+        var fileResult = Assert.IsType<FileContentResult>(result);
+        Assert.Equal("docker-compose.yml", fileResult.FileDownloadName);
+        Assert.Contains("frontend", System.Text.Encoding.UTF8.GetString(fileResult.FileContents));
+        Assert.Contains("backend", System.Text.Encoding.UTF8.GetString(fileResult.FileContents));
+    }
+
+    [Fact]
+    public async Task CreateUsingUI_Post_ShouldHandleLargeModelData()
+    {
+        // Arrange
+        var model = new DockerComposeCreateDto
         {
-            // Arrange
-            var dto = new DockerComposeCreateDto
-            {
-                Services = new List<ServiceDTO>
-                {
-                    new ServiceDTO { Name = "web", Image = "nginx:latest" }
-                },
-                Volumes = new List<VolumeDTO>(),
-                Networks = new List<NetworkDTO>
-                {
-                    new NetworkDTO { Name = "my-network", Driver = "bridge" }
-                }
-            };
+            Services = new List<ServiceDTO> { new ServiceDTO { Name = "web", Image = "nginx" } },
+            Networks = new List<NetworkDTO> { new NetworkDTO { Name = "net1" } },
+            Volumes = new List<VolumeDTO> { new VolumeDTO { Name = "vol1" } }
+        };
+        var yamlContent = "version: '3'\nservices:\n  web:\n    image: nginx\nnetworks:\n  net1:\nvolumes:\n  vol1:\n";
+        _dockerComposeServiceMock.Setup(service => service.GenerateDockerComposeYaml(It.IsAny<DockerComposeCreateDto>())).Returns(yamlContent);
 
-            var serviceEntities = new List<ServiceEntity>
-            {
-                new ServiceEntity { Name = "web", Image = "nginx:latest" }
-            };
+        // Act
+        var result = await _controller.CreateUsingUI(model);
 
-            var networkEntities = new List<NetworkEntity>
-            {
-                new NetworkEntity { Name = "my-network", Driver = "bridge" }
-            };
+        // Assert
+        var fileResult = Assert.IsType<FileContentResult>(result);
+        Assert.Equal("docker-compose.yml", fileResult.FileDownloadName);
+        Assert.Contains("web", System.Text.Encoding.UTF8.GetString(fileResult.FileContents));
+        Assert.Contains("net1", System.Text.Encoding.UTF8.GetString(fileResult.FileContents));
+        Assert.Contains("vol1", System.Text.Encoding.UTF8.GetString(fileResult.FileContents));
+    }
 
-            _mapperMock.Setup(m => m.Map<List<ServiceEntity>>(dto.Services)).Returns(serviceEntities);
-            _mapperMock.Setup(m => m.Map<List<NetworkEntity>>(dto.Networks)).Returns(networkEntities);
+    [Fact]
+    public async Task CreateUsingUI_Post_ShouldReturnViewWhenModelIsNull()
+    {
+        // Arrange
+        DockerComposeCreateDto model = null;
 
-            // Act
-            var result = _service.GenerateDockerComposeYaml(dto);
+        // Act
+        var result = await _controller.CreateUsingUI(model);
 
-            // Assert
-            result.Should().Contain("networks:");
-            result.Should().Contain("my-network:");
-            result.Should().Contain("driver: bridge");
-        }
+        // Assert
+        var viewResult = Assert.IsType<ViewResult>(result);
+        Assert.Null(viewResult.Model);
+    }
 
-
-        [Fact]
-        public void GenerateDockerComposeYaml_ShouldGenerateYamlWithEnvironmentVariables()
+    [Fact]
+    public async Task CreateUsingUI_Post_ShouldGenerateDockerComposeV3_8_WhenValidModel()
+    {
+        // Arrange
+        var model = new DockerComposeCreateDto
         {
-            // Arrange
-            var dto = new DockerComposeCreateDto
-            {
-                Services = new List<ServiceDTO>
-                {
-                    new ServiceDTO
-                    {
-                        Name = "web",
-                        Image = "nginx:latest",
-                        Environment = new List<Docker_Compose_Generator.Models.Environment>
-                        {
-                            new Environment { Key = "ENV_VAR", Value = "value" }
-                        }
-                    }
-                },
-                Volumes = new List<VolumeDTO>(),
-                Networks = new List<NetworkDTO>()
-            };
-
-            var serviceEntities = new List<ServiceEntity>
-            {
-                new ServiceEntity
-                {
-                    Name = "web",
-                    Image = "nginx:latest",
-                    Environment = new List<EnvironmentEntity>
-                    {
-                        new EnvironmentEntity { Key = "ENV_VAR", Value = "value" }
-                    }
-                }
-            };
-
-            _mapperMock.Setup(m => m.Map<List<ServiceEntity>>(dto.Services)).Returns(serviceEntities);
-
-            // Act
-            var result = _service.GenerateDockerComposeYaml(dto);
-
-            // Assert
-            result.Should().Contain("environment:");
-            result.Should().Contain("ENV_VAR: value");
+            Services = new List<ServiceDTO>
+        {
+            new ServiceDTO { Name = "web", Image = "nginx" }
         }
+        };
+        var expectedYamlContent = "version: '3.8'\nservices:\n  web:\n    image: nginx";
+        _dockerComposeServiceMock.Setup(service => service.GenerateDockerComposeYaml(It.IsAny<DockerComposeCreateDto>())).Returns(expectedYamlContent);
 
-        //    [Fact]
-        //    public void GenerateDockerComposeYaml_ShouldIncludeRestartPolicy()
-        //    {
-        //        // Arrange
-        //        var dto = new DockerComposeCreateDto
-        //        {
-        //            Services = new List<ServiceDTO>
-        //            {
-        //                new ServiceDTO
-        //                {
-        //                    Name = "web",
-        //                    Image = "nginx:latest",
-        //                    RestartPolicy = new RestartPolicy
-        //                    {
-        //                        Condition = "always",
-        //                        MaxRetries = 5,
-        //                        Delay = new TimeSpan(1)
-        //                    }
-        //                }
-        //            },
-        //            Volumes = new List<VolumeDTO>(),
-        //            Networks = new List<NetworkDTO>()
-        //        };
+        // Act
+        var result = await _controller.CreateUsingUI(model);
 
-        //        var serviceEntities = new List<ServiceEntity>
-        //        {
-        //            new ServiceEntity
-        //            {
-        //                Name = "web",
-        //                Image = "nginx:latest",
-        //                RestartPolicy = new RestartPolicyEntity
-        //                {
-        //                    Condition = "always",
-        //                    MaxRetries = 5,
-        //                    Delay = new TimeSpan(10)
-        //                }
-        //            }
-        //        };
+        // Assert
+        var fileResult = Assert.IsType<FileContentResult>(result);
+        var yamlResult = System.Text.Encoding.UTF8.GetString(fileResult.FileContents);
+        Assert.Contains("version: '3.8'", yamlResult);
+        Assert.Contains("web", yamlResult);
+        Assert.Contains("nginx", yamlResult);
+    }
 
-        //        _mapperMock.Setup(m => m.Map<List<ServiceEntity>>(dto.Services)).Returns(serviceEntities);
+    [Fact]
+    public async Task CreateUsingUI_Post_ShouldGenerateDockerComposeV3_8_WithMultipleServices()
+    {
+        // Arrange
+        var model = new DockerComposeCreateDto
+        {
+            Services = new List<ServiceDTO>
+        {
+            new ServiceDTO { Name = "web", Image = "nginx" },
+            new ServiceDTO { Name = "db", Image = "postgres" }
+        }
+        };
+        var expectedYamlContent = "version: '3.8'\nservices:\n  web:\n    image: nginx\n  db:\n    image: postgres";
+        _dockerComposeServiceMock.Setup(service => service.GenerateDockerComposeYaml(It.IsAny<DockerComposeCreateDto>())).Returns(expectedYamlContent);
 
-        //        // Act
-        //        var result = _service.GenerateDockerComposeYaml(dto);
+        // Act
+        var result = await _controller.CreateUsingUI(model);
 
-        //        // Assert
-        //        result.Should().Contain("restart: always (max_retries: 5) (delay: 10)");
-        //    }
+        // Assert
+        var fileResult = Assert.IsType<FileContentResult>(result);
+        var yamlResult = System.Text.Encoding.UTF8.GetString(fileResult.FileContents);
+        Assert.Contains("version: '3.8'", yamlResult);
+        Assert.Contains("web", yamlResult);
+        Assert.Contains("nginx", yamlResult);
+        Assert.Contains("db", yamlResult);
+        Assert.Contains("postgres", yamlResult);
+    }
 
-        //}
+    [Fact]
+    public async Task CreateUsingUI_Post_ShouldGenerateDockerComposeV3_8_WithNetworks()
+    {
+        // Arrange
+        var model = new DockerComposeCreateDto
+        {
+            Networks = new List<NetworkDTO>
+        {
+            new NetworkDTO { Name = "frontend" },
+            new NetworkDTO { Name = "backend" }
+        }
+        };
+        var expectedYamlContent = "version: '3.8'\networks:\n  frontend:\n  backend:\n";
+        _dockerComposeServiceMock.Setup(service => service.GenerateDockerComposeYaml(It.IsAny<DockerComposeCreateDto>())).Returns(expectedYamlContent);
 
+        // Act
+        var result = await _controller.CreateUsingUI(model);
 
+        // Assert
+        var fileResult = Assert.IsType<FileContentResult>(result);
+        var yamlResult = System.Text.Encoding.UTF8.GetString(fileResult.FileContents);
+        Assert.Contains("version: '3.8'", yamlResult);
+        Assert.Contains("frontend", yamlResult);
+        Assert.Contains("backend", yamlResult);
+    }
+
+    [Fact]
+    public async Task CreateUsingUI_Post_ShouldGenerateDockerComposeV3_8_WithVolumes()
+    {
+        // Arrange
+        var model = new DockerComposeCreateDto
+        {
+            Volumes = new List<VolumeDTO>
+        {
+            new VolumeDTO { Name = "vol1" },
+            new VolumeDTO { Name = "vol2" }
+        }
+        };
+        var expectedYamlContent = "version: '3.8'\nvolumes:\n  vol1:\n  vol2:\n";
+        _dockerComposeServiceMock.Setup(service => service.GenerateDockerComposeYaml(It.IsAny<DockerComposeCreateDto>())).Returns(expectedYamlContent);
+
+        // Act
+        var result = await _controller.CreateUsingUI(model);
+
+        // Assert
+        var fileResult = Assert.IsType<FileContentResult>(result);
+        var yamlResult = System.Text.Encoding.UTF8.GetString(fileResult.FileContents);
+        Assert.Contains("version: '3.8'", yamlResult);
+        Assert.Contains("vol1", yamlResult);
+        Assert.Contains("vol2", yamlResult);
+    }
+
+    [Fact]
+    public async Task CreateUsingUI_Post_ShouldGenerateDockerComposeV3_8_WithServicePorts()
+    {
+        // Arrange
+        var model = new DockerComposeCreateDto
+        {
+            Services = new List<ServiceDTO>
+        {
+            new ServiceDTO { Name = "web", Image = "nginx" }
+        }
+        };
+        var expectedYamlContent = "version: '3.8'\nservices:\n  web:\n    image: nginx\n    ports:\n      - '80:80'";
+        _dockerComposeServiceMock.Setup(service => service.GenerateDockerComposeYaml(It.IsAny<DockerComposeCreateDto>())).Returns(expectedYamlContent);
+
+        // Act
+        var result = await _controller.CreateUsingUI(model);
+
+        // Assert
+        var fileResult = Assert.IsType<FileContentResult>(result);
+        var yamlResult = System.Text.Encoding.UTF8.GetString(fileResult.FileContents);
+        Assert.Contains("version: '3.8'", yamlResult);
+        Assert.Contains("web", yamlResult);
+        Assert.Contains("nginx", yamlResult);
+        Assert.Contains("80:80", yamlResult);
+    }
+
+    [Fact]
+    public async Task CreateUsingUI_Post_ShouldGenerateDockerComposeV3_8_WithEnvironmentVariables()
+    {
+        // Arrange
+        var model = new DockerComposeCreateDto
+        {
+            Services = new List<ServiceDTO>
+        {
+            new ServiceDTO
+            {
+                Name = "web",
+                Image = "nginx",
+            }
+        }
+        };
+        var expectedYamlContent = "version: '3.8'\nservices:\n  web:\n    image: nginx\n    environment:\n      - ENV_VAR=production\n      - DEBUG=true";
+        _dockerComposeServiceMock.Setup(service => service.GenerateDockerComposeYaml(It.IsAny<DockerComposeCreateDto>())).Returns(expectedYamlContent);
+
+        // Act
+        var result = await _controller.CreateUsingUI(model);
+
+        // Assert
+        var fileResult = Assert.IsType<FileContentResult>(result);
+        var yamlResult = System.Text.Encoding.UTF8.GetString(fileResult.FileContents);
+        Assert.Contains("version: '3.8'", yamlResult);
+        Assert.Contains("web", yamlResult);
+        Assert.Contains("nginx", yamlResult);
+        Assert.Contains("ENV_VAR=production", yamlResult);
+        Assert.Contains("DEBUG=true", yamlResult);
+    }
+
+    [Fact]
+    public async Task CreateUsingUI_Get_ShouldReturnViewWithModel()
+    {
+        // Arrange
+        var expectedModel = new DockerComposeCreateDto();
+
+        // Act
+        var result =  _controller.CreateUsingUI();
+
+        // Assert
+        var viewResult = Assert.IsType<ViewResult>(result);
+        Assert.Equal(expectedModel, viewResult.Model);
+    }
+
+    [Fact]
+    public async Task CreateUsingUI_Post_ShouldReturnFile_WhenModelIsValid()
+    {
+        // Arrange
+        var model = new DockerComposeCreateDto();
+        var yamlContent = "version: '3'";
+        _dockerComposeServiceMock.Setup(service => service.GenerateDockerComposeYaml(It.IsAny<DockerComposeCreateDto>())).Returns(yamlContent);
+
+        // Act
+        var result = await _controller.CreateUsingUI(model);
+
+        // Assert
+        var fileResult = Assert.IsType<FileContentResult>(result);
+        Assert.Equal("application/octet-stream", fileResult.ContentType);
+        Assert.Equal("docker-compose.yml", fileResult.FileDownloadName);
+    }
+
+    [Fact]
+    public async Task CreateUsingUI_Post_ShouldReturnView_WhenModelIsInvalid()
+    {
+        // Arrange
+        var model = new DockerComposeCreateDto();
+        _dockerComposeServiceMock.Setup(service => service.GenerateDockerComposeYaml(It.IsAny<DockerComposeCreateDto>())).Throws(new System.Exception("Test Exception"));
+
+        // Act
+        var result = await _controller.CreateUsingUI(model);
+
+        // Assert
+        var viewResult = Assert.IsType<ViewResult>(result);
+        Assert.Equal(model, viewResult.Model);
+    }
+
+    [Fact]
+    public async Task CreateUsingUI_Post_ShouldSetTempDataOnFailure()
+    {
+        // Arrange
+        var model = new DockerComposeCreateDto();
+        _dockerComposeServiceMock.Setup(service => service.GenerateDockerComposeYaml(It.IsAny<DockerComposeCreateDto>())).Throws(new System.Exception("Test Exception"));
+
+        // Act
+        var result = await _controller.CreateUsingUI(model);
+
+        // Assert
+        Assert.Equal(model, _controller.TempData["DockerConfig"]);
+        Assert.Equal("Test Exception", _controller.TempData["ErrorMessage"]);
+    }
+
+    [Fact]
+    public async Task CreateUsingUI_Post_ShouldReturnFile_WhenYAMLGenerationSucceeds()
+    {
+        // Arrange
+        var model = new DockerComposeCreateDto();
+        var yamlContent = "version: '3'";
+        _dockerComposeServiceMock.Setup(service => service.GenerateDockerComposeYaml(It.IsAny<DockerComposeCreateDto>())).Returns(yamlContent);
+
+        // Act
+        var result = await _controller.CreateUsingUI(model);
+
+        // Assert
+        var fileResult = Assert.IsType<FileContentResult>(result);
+        Assert.Equal("docker-compose.yml", fileResult.FileDownloadName);
     }
 }

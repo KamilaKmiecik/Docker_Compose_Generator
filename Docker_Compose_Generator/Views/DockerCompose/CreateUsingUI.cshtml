@@ -1,17 +1,24 @@
 ﻿@model Docker_Compose_Generator.Models.DockerComposeCreateDto
 
+
 <h2>Create Docker Compose File</h2>
 
 <form asp-action="CreateUsingUI" method="post">
     @Html.AntiForgeryToken()
 
-    @if (TempData["ErrorMessage"] !=null)
+  @*   @if (TempData["ErrorMessage"] !=null)
           {
     <script>
         alert('@TempData["ErrorMessage"]');
     </script>
 }
-
+ *@
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["ErrorMessage"]
+        </div>
+    }
         <div>
             <label asp-for="Version"></label>
             <span class="form-control-static">@Model.Version</span>
