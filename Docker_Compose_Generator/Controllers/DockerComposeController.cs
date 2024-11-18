@@ -43,7 +43,9 @@ namespace Docker_Compose_Generator.Controllers
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError("Error", $"An error occurred: {ex.Message}");
+                ModelState.AddModelError("Error", $"An error occurred: {ex.InnerException.Message}");
+                TempData["ErrorMessage"] = ex.InnerException.Message;
+
                 return View(model); 
             }
         }

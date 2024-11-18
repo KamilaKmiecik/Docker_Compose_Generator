@@ -6,7 +6,7 @@
 }
 
 <form asp-action="CreateUsingUI" method="post">
-    @Html.AntiForgeryToken()
+    @* //@Html.AntiForgeryToken() *@
 
     @if (TempData["ErrorMessage"] != null)
     {
