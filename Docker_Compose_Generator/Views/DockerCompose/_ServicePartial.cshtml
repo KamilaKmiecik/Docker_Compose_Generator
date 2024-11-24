@@ -1,116 +1,101 @@
 ﻿@model Docker_Compose_Generator.Models.ServiceDTO
 @{
-    var index = ViewData["index"];
+    var index = (int)ViewData["index"];
 }
 
-<div id="service-container">
-    <div class="service-item">
-        <h4>Service</h4>
-        <div class="form-group">
-            <label asp-for="Name"></label>
-            <input asp-for="Name" name="Services[@index].Name" class="form-control" />
-            <span asp-validation-for="Name" class="text-danger"></span>
-        </div>
+<div id="service-item-@index" class="card service-item" data-index="@index">
+    
+    <label>Name:</label>
+    <input type="text" name="Services[@index].Name" value="@Model.Name" placeholder="Enter service name" required />
 
-        <div class="form-group">
-            <label asp-for="Image"></label>
-            <input asp-for="Image" name="Services[@index].Image" class="form-control" />
-            <span asp-validation-for="Image" class="text-danger"></span>
-        </div>
+    <label>Image:</label>
+    <input type="text" name="Services[@index].Image" value="@Model.Image" placeholder="Enter service image" required />
 
-        <div class="form-group">
-            <label>Ports</label>
-            <div id="ports-container">
-            </div>
-            <button type="button" id="add-port-btn" class="btn btn-secondary">Add Port</button>
-        </div>
-
-        <div class="form-group">
-            <label>Volumes</label>
-            <div id="volumes-container">
-            </div>
-            <button type="button" id="add-volume-btn" class="btn btn-secondary">Add Volume</button>
-        </div>
-
-        <div class="form-group">
-            <label>Environment Variables</label>
-            <div id="environment-container">
-            </div>
-            <button type="button" id="add-env-btn" class="btn btn-secondary">Add Environment Variable</button>
-        </div>
-
-        <div class="form-group">
-            <label>Networks</label>
-            <div id="networks-container">
-            </div>
-            <button type="button" id="add-network-btn" class="btn btn-secondary">Add Network</button>
-        </div>
-
-        <div class="form-group">
-            <label>Restart Policy</label>
-            <div class="form-group">
-                <label>Condition</label>
-                <input type="text" asp-for="RestartPolicy.Condition" name="Services[@index].RestartPolicy.Condition" class="form-control" />
-                <span asp-validation-for="RestartPolicy.Condition" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label>Max Retries</label>
-                <input type="number" asp-for="RestartPolicy.MaxRetries" name="Services[@index].RestartPolicy.MaxRetries" class="form-control" />
-                <span asp-validation-for="RestartPolicy.MaxRetries" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label>Delay</label>
-                <input type="text" asp-for="RestartPolicy.Delay" name="Services[@index].RestartPolicy.Delay" class="form-control" placeholder="e.g., 00:00:05" />
-                <span asp-validation-for="RestartPolicy.Delay" class="text-danger"></span>
-            </div>
-        </div>
-
-        <button type="button" class="btn btn-danger remove-service-btn">Remove Service</button>
+    <!-- Restart Policy -->
+    <div class="restart-policy">
+        <h4>Restart Policy</h4>
+        <label>Condition:</label>
+        <select name="Services[@index].RestartPolicy.Condition">
+            <option value="no">No</option>
+            <option value="always" >Always</option>
+            <option value="on-failure">On-Failure</option>
+            <option value="unless-stopped">Unless-Stopped</option>
+        </select>
+        <label>Max Retries:</label>
+        <input type="number" name="Services[@index].RestartPolicy.MaxRetries" value="@Model.RestartPolicy?.MaxRetries" placeholder="Enter max retries" />
+        <label>Delay:</label>
+        <input type="text" name="Services[@index].RestartPolicy.Delay" value="@Model.RestartPolicy?.Delay" placeholder="e.g., 5s, 2m" />
     </div>
+
+    <!-- Environment Variables -->
+    <div class="environment">
+        <h4>Environment Variables</h4>
+        <div id="env-container-@index">
+            @if (Model.Environment != null)
+            {
+                for (int i = 0; i < Model.Environment.Count; i++)
+                {
+                    <div class="env-item">
+                        <label>Key:</label>
+                        <input type="text" name="Services[@index].Environment[@i].Key" value="@Model.Environment[i].Key" placeholder="Key" />
+                        <label>Value:</label>
+                        <input type="text" name="Services[@index].Environment[@i].Value" value="@Model.Environment[i].Value" placeholder="Value" />
+                        <button type="button" class="remove-env-button">Remove</button>
+                    </div>
+                }
+            }
+        </div>
+        <button type="button" class="add-env-button" data-service-index="@index">Add Environment Variable</button>
+    </div>
+
+    <!-- Ports -->
+    <div class="ports">
+        <h4>Ports</h4>
+        <div id="port-container-@index">
+            @if (Model.Ports != null)
+            {
+                for (int i = 0; i < Model.Ports.Count; i++)
+                {
+                    <div class="port-item">
+                        <label>Host Port:</label>
+                        <input type="number" name="Services[@index].Ports[@i].HostPort" value="@Model.Ports[i].HostPort" placeholder="Host Port" />
+                        <label>Container Port:</label>
+                        <input type="number" name="Services[@index].Ports[@i].ContainerPort" value="@Model.Ports[i].ContainerPort" placeholder="Container Port" />
+                        <label>Protocol:</label>
+                        <select name="Services[@index].Ports[@i].Protocol">
+                            <option value="tcp">TCP</option>
+                            <option value="udp" >UDP</option>
+                        </select>
+                        <button type="button" class="remove-port-button">Remove</button>
+                    </div>
+                }
+            }
+        </div>
+        <button type="button" class="add-port-button" data-service-index="@index">Add Port</button>
+    </div>
+
+    <!-- Volumes -->
+    <div class="volumes">
+        <h4>Volumes</h4>
+        <div id="volume-container-@index">
+            @if (Model.Volumes != null)
+            {
+                for (int i = 0; i < Model.Volumes.Count; i++)
+                {
+                    <div class="volume-item">
+                        <label>Source:</label>
+                        <input type="text" name="Services[@index].Volumes[@i].Source" value="@Model.Volumes[i].Source" placeholder="Source" />
+                        <label>Target:</label>
+                        <input type="text" name="Services[@index].Volumes[@i].Target" value="@Model.Volumes[i].Target" placeholder="Target" />
+                        <button type="button" class="remove-volume-button">Remove</button>
+                    </div>
+                }
+            }
+        </div>
+        <button type="button" class="add-volume-button" data-service-index="@index">Add Volume</button>
+    </div>
+
+
+    <button type="button" class="remove-button" onclick="removeService(@index)">Remove service</button>
+
 </div>
-
-<script>
-    document.getElementById('add-port-btn').addEventListener('click', function () {
-        const portsContainer = document.getElementById('ports-container');
-        const portIndex = portsContainer.children.length;
-
-        const portDiv = document.createElement('div');
-        portDiv.classList.add('port');
-
-        const hostPortInput = document.createElement('input');
-        hostPortInput.type = 'number';
-        hostPortInput.name = `Services[@index].Ports[${portIndex}].HostPort`;
-        hostPortInput.classList.add('form-control');
-        hostPortInput.placeholder = 'Host Port';
-        portDiv.appendChild(hostPortInput);
-
-        const containerPortInput = document.createElement('input');
-        containerPortInput.type = 'number';
-        containerPortInput.name = `Services[@index].Ports[${portIndex}].ContainerPort`;
-        containerPortInput.classList.add('form-control');
-        containerPortInput.placeholder = 'Container Port';
-        portDiv.appendChild(containerPortInput);
-
-        const protocolInput = document.createElement('input');
-        protocolInput.type = 'text';
-        protocolInput.name = `Services[@index].Ports[${portIndex}].Protocol`;
-        protocolInput.classList.add('form-control');
-        protocolInput.placeholder = 'Protocol (default: tcp)';
-        portDiv.appendChild(protocolInput);
-
-        // Add remove button for port
-        const removePortBtn = document.createElement('button');
-        removePortBtn.type = 'button';
-        removePortBtn.classList.add('btn', 'btn-danger', 'remove-port-btn');
-        removePortBtn.innerText = 'Remove Port';
-        portDiv.appendChild(removePortBtn);
-
-        portsContainer.appendChild(portDiv);
-
-        removePortBtn.addEventListener('click', function () {
-            portsContainer.removeChild(portDiv);
-        });
-    });
-
-    document.getElementById('add-volume-btn').addEventListener('click', function () {
-        const volumesContainer = document.getElementById('volumes-container');

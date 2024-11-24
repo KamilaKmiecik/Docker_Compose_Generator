@@ -1,128 +1,83 @@
 ﻿@model Docker_Compose_Generator.Models.VolumeDTO
 @{
-    var index = ViewData["index"];
+    var index = (int)ViewData["index"];
 }
 
-<div id="volume-container">
-    <div class="volume-item">
-        <h4>Volume</h4>
-        <div class="form-group">
-            <label asp-for="Name"></label>
-            <input asp-for="Name" name="Volumes[@index].Name" class="form-control" />
-            <span asp-validation-for="Name" class="text-danger"></span>
-        </div>
+<div id="network-item-@index" class="card volume-item" data-index="@index">
+    <label>Name:</label>
+    <input type="text" name="Volumes[@index].Name" value="@Model.Name" placeholder="Enter volume name" required />
 
-        <div class="form-group">
-            <label asp-for="Driver"></label>
-            <input asp-for="Driver" name="Volumes[@index].Driver" class="form-control" />
-            <span asp-validation-for="Driver" class="text-danger"></span>
-        </div>
+    <label>Driver:</label>
+    <select name="Volumes[@index].Driver">
+        <option value="local")>Local</option>
+        <option value="nfs" >NFS</option>
+        <option value="custom">Custom</option>
+    </select>
 
-        <div class="form-group">
-            <label>Driver Options</label>
-            <div id="driver-options-container">
-            </div>
-            <button type="button" id="add-driver-option-btn" class="btn btn-secondary">Add Driver Option</button>
-        </div>
+    <label>Source:</label>
+    <input type="text" name="Volumes[@index].Source" value="@Model.Source" placeholder="Enter source path" />
 
-        <div class="form-group">
-            <label>Labels</label>
-            <div id="labels-container">
-            </div>
-            <button type="button" id="add-label-btn" class="btn btn-secondary">Add Label</button>
-        </div>
+    <label>Target:</label>
+    <input type="text" name="Volumes[@index].Target" value="@Model.Target" placeholder="Enter target path" />
 
-        <div class="form-group">
-            <label>External</label>
-            <input type="checkbox" name="Volumes[@index].External" value="true" />
-            <input type="hidden" name="Volumes[@index].External" value="false" />
-            <span asp-validation-for="External" class="text-danger"></span>
-        </div>
+    <label>Access Mode:</label>
+    <select name="Volumes[@index].AccessMode">
+        <option value="rw">Read/Write</option>
+        <option value="ro">Read-Only</option>
+    </select>
 
-        <div class="form-group">
-            <label>Read-Only</label>
-            <input type="checkbox" name="Volumes[@index].ReadOnly" value="true" />
-            <input type="hidden" name="Volumes[@index].ReadOnly" value="false" />
-            <span asp-validation-for="ReadOnly" class="text-danger"></span>
-        </div>
-
-        <button type="button" class="btn btn-danger remove-volume-btn">Remove Volume</button>
+    <div class="form-row">
+        <label for="external-checkbox-@index">External:</label>
+        <input id="external-checkbox-@index" type="checkbox" name="Volumes[@index].External" value="true" />
     </div>
+
+    <div class="form-row">
+        <label for="readonly-checkbox-@index">Read Only:</label>
+        <input id="readonly-checkbox-@index" type="checkbox" name="Volumes[@index].ReadOnly" value="true" />
+    </div>
+
+
+    <!-- Driver Options -->
+    <div class="driver-options">
+        <h4>Driver Options</h4>
+        <div id="driver-options-container-@index">
+            @if (Model.DriverOptions != null)
+            {
+                foreach (var option in Model.DriverOptions)
+                {
+                    <div class="driver-option-item">
+                        <label>Key:</label>
+                        <input type="text" name="Volumes[@index].DriverOptions[@option.Key]" value="@option.Key" placeholder="Enter key" />
+                        <label>Value:</label>
+                        <input type="text" name="Volumes[@index].DriverOptions[@option.Key]" value="@option.Value" placeholder="Enter value" />
+                        <button type="button" class="remove-driver-option-button">Remove Option</button>
+                    </div>
+                }
+            }
+        </div>
+        <button type="button" class="add-driver-option-button" data-volume-index="@index">Add Driver Option</button>
+    </div>
+
+    <!-- Labels -->
+    <div class="labels">
+        <h4>Labels</h4>
+        <div id="labels-container-@index">
+            @if (Model.Labels != null)
+            {
+                foreach (var label in Model.Labels)
+                {
+                    <div class="label-item">
+                        <label>Key:</label>
+                        <input type="text" name="Volumes[@index}.Labels[@label.Key]" value="@label.Key" placeholder="Enter key" />
+                        <label>Value:</label>
+                        <input type="text" name="Volumes[@index}.Labels[@label.Key]" value="@label.Value" placeholder="Enter value" />
+                        <button type="button" class="remove-label-button">Remove Label</button>
+                    </div>
+                }
+            }
+        </div>
+        <button type="button" class="add-label-button" data-volume-index="@index">Add Label</button>
+    </div>
+
+    <button type="button" class="remove-volume-button">Remove Volume</button>
 </div>
-
-<script>
-    document.getElementById('add-driver-option-btn').addEventListener('click', function () {
-        const driverOptionsContainer = document.getElementById('driver-options-container');
-        const optionIndex = driverOptionsContainer.children.length;
-
-        const optionDiv = document.createElement('div');
-        optionDiv.classList.add('driver-option');
-
-        const keyInput = document.createElement('input');
-        keyInput.type = 'text';
-        keyInput.name = `Volumes[@index].DriverOptions[${optionIndex}].Key`;
-        keyInput.classList.add('form-control');
-        keyInput.placeholder = 'Key';
-        optionDiv.appendChild(keyInput);
-
-        const valueInput = document.createElement('input');
-        valueInput.type = 'text';
-        valueInput.name = `Volumes[@index].DriverOptions[${optionIndex}].Value`;
-        valueInput.classList.add('form-control');
-        valueInput.placeholder = 'Value';
-        optionDiv.appendChild(valueInput);
-
-        const removeDriverOptionBtn = document.createElement('button');
-        removeDriverOptionBtn.type = 'button';
-        removeDriverOptionBtn.classList.add('btn', 'btn-danger', 'remove-driver-option-btn');
-        removeDriverOptionBtn.innerText = 'Remove Driver Option';
-        optionDiv.appendChild(removeDriverOptionBtn);
-
-        driverOptionsContainer.appendChild(optionDiv);
-
-        removeDriverOptionBtn.addEventListener('click', function () {
-            driverOptionsContainer.removeChild(optionDiv);
-        });
-    });
-
-    document.getElementById('add-label-btn').addEventListener('click', function () {
-        const labelsContainer = document.getElementById('labels-container');
-        const labelIndex = labelsContainer.children.length;
-
-        const labelDiv = document.createElement('div');
-        labelDiv.classList.add('label');
-
-        const keyInput = document.createElement('input');
-        keyInput.type = 'text';
-        keyInput.name = `Volumes[@index].Labels[${labelIndex}].Key`;
-        keyInput.classList.add('form-control');
-        keyInput.placeholder = 'Label Key';
-        labelDiv.appendChild(keyInput);
-
-        const valueInput = document.createElement('input');
-        valueInput.type = 'text';
-        valueInput.name = `Volumes[@index].Labels[${labelIndex}].Value`;
-        valueInput.classList.add('form-control');
-        valueInput.placeholder = 'Label Value';
-        labelDiv.appendChild(valueInput);
-
-        const removeLabelBtn = document.createElement('button');
-        removeLabelBtn.type = 'button';
-        removeLabelBtn.classList.add('btn', 'btn-danger', 'remove-label-btn');
-        removeLabelBtn.innerText = 'Remove Label';
-        labelDiv.appendChild(removeLabelBtn);
-
-        labelsContainer.appendChild(labelDiv);
-
-        removeLabelBtn.addEventListener('click', function () {
-            labelsContainer.removeChild(labelDiv);
-        });
-    });
-
-    document.querySelectorAll('.remove-volume-btn').forEach(btn => {
-        btn.addEventListener('click', function () {
-            const volumeItem = btn.closest('.volume-item');
-            volumeItem.parentNode.removeChild(volumeItem);
-        });
-    });
-</script>

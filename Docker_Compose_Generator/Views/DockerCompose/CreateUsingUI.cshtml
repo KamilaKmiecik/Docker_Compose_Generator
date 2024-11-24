@@ -1,48 +1,79 @@
-﻿added @using Newtonsoft.Json;
-@{
-    var model = TempData["DockerComposeModel"] != null
-        ? JsonConvert.DeserializeObject<DockerComposeCreateDto>(TempData["DockerComposeModel"].ToString())
-        : new DockerComposeCreateDto();
-}
+﻿@model DockerComposeCreateDto
 
-<form asp-action="CreateUsingUI" method="post">
-    @* //@Html.AntiForgeryToken() *@
+<form asp-action="CreateUsingUI" asp-controller="DockerCompose" method="post" id="docker-compose-form">
+    <div class="app-container">
 
-    @if (TempData["ErrorMessage"] != null)
-    {
-        <script>
-            alert('@TempData["ErrorMessage"]');
-        </script>
-    }
+@*         <nav class="app-nav">
+            <ul>
+                <li><a href="#services-section">Services</a></li>
+                <li><a href="#networks-section">Networks</a></li>
+                <li><a href="#volumes-section">Volumes</a></li>
+            </ul>
+        </nav> *@
 
-    <div>
-      @*   <label asp-for="Version"></label>
-        <span class="form-control-static">@Model.Version</span>
-        <span asp-validation-for="Version" class="text-danger"></span> *@
+        <main class="app-main">
+
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <script>
+                    alert('@TempData["ErrorMessage"]');
+                </script>
+            }
+
+            <div class="sections-container">
+                <section id="services-section" class="section">
+                    <h2>Services</h2>
+                    <div id="services-container">
+                        @if (Model.Services != null && Model.Services.Any())
+                        {
+                            for (int i = 0; i < Model.Services.Count; i++)
+                            {
+                                <div>
+                                    @Html.Partial("_ServicePartial", Model.Services[i], new ViewDataDictionary(ViewData) { { "index", i } })
+                                </div>
+                            }
+                        }
+                    </div>
+                    <button type="button" id="add-service" class="add-button">Add Service</button>
+                </section>
+
+                <section id="networks-section" class="section">
+                    <h2>Networks</h2>
+                    <div id="networks-container">
+                        @if (Model.Networks != null && Model.Networks.Any())
+                        {
+                            for (int i = 0; i < Model.Networks.Count; i++)
+                            {
+                                <div>
+                                    @Html.Partial("_NetworkPartial", Model.Networks[i], new ViewDataDictionary(ViewData) { { "index", i } })
+                                </div>
+                            }
+                        }
+                    </div>
+                    <button type="button" id="add-network" class="add-button">Add Network</button>
+                </section>
+
+                <section id="volumes-section" class="section">
+                    <h2>Volumes</h2>
+                    <div id="volumes-container">
+                        @if (Model.Volumes != null && Model.Volumes.Any())
+                        {
+                            for (int i = 0; i < Model.Volumes.Count; i++)
+                            {
+                                <div>
+                                    @Html.Partial("_VolumePartial", Model.Volumes[i], new ViewDataDictionary(ViewData) { { "index", i } })
+                                </div>
+                            }
+                        }
+                    </div>
+                    <button type="button" id="add-volume" class="add-button">Add Volume</button>
+                </section>
+            </div>
+
+        </main>
+
+        <footer class="app-footer">
+            <button type="submit" class="submit-button">Generate Docker Compose</button>
+        </footer>
     </div>
-
-    <div>
-        <span class="form-control-static">Version 3.8</span>
-    </div>
-
-    <h3>Services</h3>
-    <div id="services-container">
-    </div>
-    <button type="button" id="add-service" class="btn btn-primary">Add Service</button>
-
-    <h3>Networks</h3>
-    <div id="networks-container">
-    </div>
-    <button type="button" id="add-network" class="btn btn-primary">Add Network</button>
-
-    <h3>Volumes</h3>
-    <div id="volumes-container">
-    </div>
-    <button type="button" id="add-volume" class="btn btn-primary">Add Volume</button>
-
-    <button type="submit" class="btn btn-primary">Generate Docker Compose</button>
 </form>
-
-@section Scripts {
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-}
