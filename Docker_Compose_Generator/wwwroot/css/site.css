@@ -1,223 +1,324 @@
-/* Global Styles */
-html {
-    font-size: 12px; /* Zmniejszenie rozmiaru czcionki */
-    scroll-behavior: smooth;
-    box-sizing: border-box;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-}
-
-@media (min-width: 768px) {
-    html {
-        font-size: 14px; /* Minimalny wzrost czcionki na wiêkszych ekranach */
-    }
-}
-
 body {
+    font-family: Arial, sans-serif;
     margin: 0;
-    font-family: 'Roboto', sans-serif;
-    background-color: #f9fafb; /* Bardzo jasne t³o */
-    color: #2f3640; /* Ciemny tekst dla dobrej czytelnoœci */
-    line-height: 1.5;
-    transition: background-color 0.3s ease, color 0.3s ease;
-    padding-bottom: 60px; /* Zwiêkszenie przestrzeni na dole */
+    background-color: #1e1e1e;
+    color: #fff;
+
 }
 
-/* Link Styles */
-a {
-    color: #3498db; /* Niebieski dla linków */
-    text-decoration: none;
-    transition: color 0.3s ease;
+.app-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; 
 }
 
-    a:hover {
-        color: #2980b9; /* Zmiana koloru linku przy hoverze */
-    }
-
-/* Container Styles */
-.container {
-    max-width: 900px;
-    margin: 0 auto;
+.app-header {
+    background-color: #333;
     padding: 1rem;
-    background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Subtelny cieñ */
-}
-
-/* Header Styles */
-h1, h2, h3, h4 {
-    font-weight: 500;
-    margin-bottom: 0.75rem;
-    letter-spacing: 0.3px;
-    text-transform: uppercase;
-}
-
-h1 {
-    font-size: 2.2rem; /* Mniejszy nag³ówek */
-    color: #34495e;
-    text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.05);
-}
-
-h2 {
-    font-size: 1.75rem;
-    color: #7f8c8d;
-}
-
-h3 {
-    font-size: 1.5rem;
-    color: #95a5a6;
-}
-
-h4 {
-    font-size: 1.25rem;
-    color: #bdc3c7;
-}
-
-/* Form Styles */
-.form-group {
-    margin-bottom: 1.2rem; /* Mniejszy margines */
-}
-
-label {
-    display: block;
-    margin-bottom: 0.6rem;
-    font-weight: 500;
-    color: #34495e;
-    text-transform: capitalize;
-}
-
-input[type="text"],
-input[type="number"],
-input[type="checkbox"] {
-    width: 100%;
-    padding: 0.6rem;
-    border: 2px solid #e0e0e0;
-    border-radius: 6px; /* Subtelniejsze zaokr¹glenie */
-    background-color: #f1f2f6; /* Bardziej stonowane t³o */
-    color: #2f3640;
-    font-size: 0.875rem; /* Mniejszy rozmiar czcionki */
-    transition: all 0.3s ease;
-    outline: none;
-}
-
-    input[type="text"]:focus,
-    input[type="number"]:focus {
-        border-color: #3498db; /* Niebieski kolor przy focusie */
-        box-shadow: 0 0 8px rgba(52, 152, 219, 0.2); /* Subtelny cieñ */
-    }
-
-input[type="checkbox"] {
-    width: auto;
-    margin-right: 0.8rem;
-}
-
-    input[type="checkbox"]:checked {
-        background-color: #3498db;
-    }
-
-/* Button Styles */
-.btn {
-    padding: 0.6rem 1.2rem;
-    border-radius: 30px;
-    font-weight: 600;
-    letter-spacing: 0.7px;
-    text-transform: uppercase;
-    background-color: #3498db;
-    color: white;
-    border: none;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: inline-block;
     text-align: center;
 }
 
-    .btn:hover {
-        transform: translateY(-2px); /* Subtelny efekt unoszenia */
-        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1); /* Subtelny cieñ przy hoverze */
-        background-color: #2980b9;
+    .app-header h1 {
+        margin: 0;
     }
 
-.btn-secondary {
-    background-color: #2ecc71;
-    color: white;
-    border: 2px solid #27ae60;
+.app-nav {
+    background-color: #444;
+    padding: 0.5rem;
 }
 
-    .btn-secondary:hover {
-        background-color: #27ae60;
-        transform: translateY(-2px);
+    .app-nav ul {
+        list-style: none;
+        display: flex;
+        justify-content: center;
+        padding: 0;
+        margin: 0;
     }
 
-.btn-danger {
-    background-color: #e74c3c;
-    color: white;
-    border: 2px solid #c0392b;
-}
+        .app-nav ul li {
+            margin: 0 1rem;
+        }
 
-    .btn-danger:hover {
-        background-color: #c0392b;
-        transform: translateY(-2px);
-    }
+            .app-nav ul li a {
+                color: #fff;
+                text-decoration: none;
+            }
 
-/* Item Styles */
-.volume-item,
-.network-item,
-.service-item {
-    background-color: #ffffff;
+.app-main {
+    flex: 1;
+    overflow-y: auto;
     padding: 1rem;
-    border: 2px solid #e0e0e0;
-    border-radius: 6px;
-    margin-bottom: 1rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-    .volume-item:hover,
-    .network-item:hover,
-    .service-item:hover {
-        transform: scale(1.03); /* Subtelny efekt powiêkszenia */
-        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12); /* Subtelniejszy cieñ przy hoverze */
+.section {
+    margin-bottom: 2rem;
+}
+
+.add-button {
+    background-color: #ec1d25;
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+    .add-button:hover {
+        background-color: #0056b3;
     }
 
-/* Accent Colors for Status Bars */
-.accent {
-    height: 5px;
+.submit-button {
+    background-color: #6c1412;
+    color: #fff;
+    border: none;
+    padding: 1rem;
+    width: 100%;
+    cursor: pointer;
     border-radius: 4px;
+}
+
+    .submit-button:hover {
+        background-color: #218838;
+    }
+
+.app-footer {
+    background-color: #333;
+    padding: 1rem;
+    color: white;
+    text-align: center;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+}
+
+/* Input and Select Styling */
+input, select {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    background-color: #2a2a2a;
+    color: #ffffff;
+    border: 1px solid #444;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+/* Button Styling */
+button {
+    background-color: #ec1d25;
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    margin-top: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+    button:hover {
+        background-color: #b71c1c;
+    }
+
+/* Card Styling */
+.card {
+    background-color: #1e1e1e;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+    /* Header Styling */
+    .card h3, h4 {
+        color: #ec1d25;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+
+.service-item {
+    margin-bottom: 20px;
+}
+
+h4 {
+    margin-top: 15px;
+    color: #ff5656;
+    font-size: 1.2rem;
+}
+
+button {
+    margin-top: 10px;
+}
+
+/* Card Styling for Volume */
+.volume-item {
+    margin-bottom: 20px;
+}
+
+h4 {
+    margin-top: 15px;
+    color: #ff5656;
+    font-size: 1.2rem;
+}
+
+button {
+    margin-top: 10px;
+}
+
+.label-item, .driver-option-item {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+    background-color: #2a2a2a;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+    .label-item label, .driver-option-item label {
+        font-size: 0.9rem;
+        color: #cccccc;
+    }
+
+    .label-item input, .driver-option-item input {
+        margin-bottom: 5px;
+        background-color: #121212;
+        color: #ffffff;
+        border: 1px solid #444444;
+        border-radius: 5px;
+        padding: 8px;
+        font-size: 0.9rem;
+    }
+
+
+/* Kontener dla sekcji */
+.sections-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px; /* Odstêpy miêdzy sekcjami */
+    padding: 20px;
+    flex-wrap: wrap; /* Dla responsywnoœci */
+}
+
+/* Sekcje */
+.section {
+    flex: 1 1 calc(33.333% - 20px); /* Trzy sekcje w rzêdzie */
+    background-color: #2a2a2a;
+    border: 1px solid #444;
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    min-width: 250px; /* Minimalna szerokoœæ dla ma³ych ekranów */
+    max-height: 500px; /* Maksymalna wysokoœæ sekcji */
+    overflow-y: auto; /* Przewijanie dla d³ugich list */
+}
+
+    /* Nag³ówki sekcji */
+    .section h2 {
+        text-align: center;
+        color: #ec1d25;
+        margin-bottom: 10px;
+    }
+
+#services-container, #networks-container, #volumes-container {
+    margin-bottom: 16px;
+}
+
+.add-button {
+    display: block;
+    margin: 0 auto;
+    padding: 10px 20px;
+    background-color: #ec1d25;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+    .add-button:hover {
+        background-color: #b71c1c;
+    }
+
+@media (max-width: 768px) {
+    .section {
+        flex: 1 1 100%; /* Jedna sekcja na pe³n¹ szerokoœæ */
+    }
+}
+
+label, input[type="checkbox"] {
+    display: inline-block; /* Elementy w jednej linii */
+    vertical-align: middle; /* Wyrównanie do œrodka */
+}
+
+.form-row {
+    display: flex;
+    align-items: center; /* Wyrównanie do œrodka w pionie */
+    margin-bottom: 10px; /* Odstêp miêdzy wierszami */
+}
+
+    .form-row label {
+        font-size: 16px; /* Dopasowanie czcionki do reszty */
+        margin-right: 10px; /* Odstêp miêdzy etykiet¹ a checkboxem */
+        color: #fff; /* Dopasowanie do stylu (np. bia³y tekst na ciemnym tle) */
+    }
+
+    .form-row input[type="checkbox"] {
+        margin: 0; /* Usuñ domyœlne marginesy */
+        width: 16px; /* Standardowa szerokoœæ */
+        height: 16px; /* Standardowa wysokoœæ */
+        accent-color: #ec1d25; /* Kolor zaznaczenia (nowoczesne przegl¹darki) */
+    }
+
+/* Kontenery przewijania */
+#services-container, #networks-container, #volumes-container {
+    max-height: 300px; /* Ograniczenie wysokoœci */
+    overflow-y: auto; /* W³¹cz przewijanie pionowe */
+    padding-right: 10px; /* Odstêp od prawej */
+    margin-bottom: 15px; /* Odstêp miêdzy kontenerami */
+}
+
+/* Dla przegl¹darek WebKit (Chrome, Edge, Safari) */
+::-webkit-scrollbar {
+    width: 12px; /* Szerokoœæ pionowego paska przewijania */
+    height: 12px; /* Wysokoœæ poziomego paska przewijania */
+}
+
+::-webkit-scrollbar-track {
+    background: #2a2a2a; /* T³o paska przewijania */
+    border-radius: 10px; /* Zaokr¹glone krawêdzie */
+}
+
+::-webkit-scrollbar-thumb {
+    background: #ec1d25; /* Kolor suwaka */
+    border-radius: 10px; /* Zaokr¹glenie suwaka */
+    border: 2px solid #2a2a2a; /* Oddzielenie suwaka od t³a */
+}
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: #b71c1c; /* Ciemniejszy odcieñ po najechaniu */
+    }
+
+/* Styl dla Firefoksa */
+* {
+    scrollbar-color: #ec1d25 #2a2a2a; /* Kolor suwaka i t³a */
+    scrollbar-width: thin; /* W¹ski pasek przewijania */
+}
+
+/* Opcjonalne: responsywnoœæ dla bardzo ma³ych ekranów */
+@media (max-width: 768px) {
+    ::-webkit-scrollbar {
+        width: 8px; /* Zmniejszenie rozmiaru na mniejszych ekranach */
+        height: 8px;
+    }
+}
+
+
+.section:hover {
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.3);
+    transform: translateY(-3px);
     transition: all 0.3s ease;
 }
 
-.status-new {
-    background-color: #3498db;
-}
-
-.status-in-progress {
-    background-color: #f39c12;
-}
-
-.status-closed {
-    background-color: #2ecc71;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    .container {
-        padding: 1rem;
-    }
-
-    h1 {
-        font-size: 2rem; /* Mniejsze nag³ówki */
-    }
-
-    h2, h3, h4 {
-        font-size: 1.4rem;
-    }
-
-    .btn {
-        width: 100%;
-        padding: 1rem;
-    }
-
-    .form-group {
-        margin-bottom: 1rem;
-    }
-}

@@ -3,6 +3,7 @@ using Docker_Compose_Generator.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddRazorPages();
 builder.Services.AddDistributedMemoryCache(); // Dodaj pamiêæ podrêczn¹
 
 builder.Services.AddSession(options =>
@@ -35,6 +36,8 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.MapRazorPages();
 
 app.UseAuthorization();
 

@@ -9,135 +9,121 @@ namespace Docker_Compose_Generator.Services
 {
     public class DockerComposeService : IDockerComposeService
     {
-        private readonly IMapper _mapper;
-
-        private const string VersionKey = "version";
-        private const string ServicesKey = "services";
-        private const string VolumesKey = "volumes";
-        private const string NetworksKey = "networks";
-        private const string ImageKey = "image";
-        private const string PortsKey = "ports";
-        private const string VolumesKeyInService = "volumes";
-        private const string EnvironmentKey = "environment";
-        private const string NetworksKeyInService = "networks";
-        private const string RestartKey = "restart";
-        private const string DriverKey = "driver";
-        private const string DriverOptionsKey = "driver_opts";
-        private const string ExternalKey = "external";
-        private const string LabelsKey = "labels";
-        private const string ReadOnlyKey = "read_only";
-        private const string InternalKey = "internal";
-        private const string AttachableKey = "attachable";
-        private const string IpamKey = "ipam";
-
-        public DockerComposeService(IMapper mapper)
-        {
-            _mapper = mapper;
-        }
 
         public string GenerateDockerComposeYaml(DockerComposeCreateDto model)
         {
-            var volumeEntities = _mapper.Map<List<VolumeEntity>>(model.Volumes);
-            var networkEntities = _mapper.Map<List<NetworkEntity>>(model.Networks);
-            var serviceEntities = _mapper.Map<List<ServiceEntity>>(model.Services);
+            if (model == null)
+                throw new ArgumentNullException(nameof(model), "Input model cannot be null.");
 
-            var composeDict = new Dictionary<string, object>
+            if (string.IsNullOrWhiteSpace(model.Version))
+                throw new ArgumentException("Version cannot be null or empty.", nameof(model.Version));
+
+            var dockerCompose = DockerComposeEntity.Create(model.Version);
+
+            if (model.Services?.Any() == true)
             {
-                { VersionKey, model.Version },
-                { ServicesKey, new Dictionary<string, object>() },
-                { VolumesKey, GenerateVolumesSection(volumeEntities) },
-                { NetworksKey, GenerateNetworksSection(networkEntities) }
-            };
-
-            var servicesDict = (Dictionary<string, object>)composeDict[ServicesKey];
-            foreach (var service in serviceEntities)
-            {
-                servicesDict[service.Name] = GenerateServiceSection(service);
-            }
-
-            var serializer = new SerializerBuilder()
-                .WithNamingConvention(CamelCaseNamingConvention.Instance)
-                .Build();
-
-            return serializer.Serialize(composeDict);
-        }
-
-        private Dictionary<string, object> GenerateServiceSection(ServiceEntity service)
-        {
-            var serviceDict = new Dictionary<string, object>
-            {
-                { ImageKey, service.Image },
-                { PortsKey, GeneratePortsSection(service.Ports) },
-                { VolumesKeyInService, GenerateServiceVolumesSection(service.Volumes) },
-                { EnvironmentKey, GenerateEnvironmentSection(service.Environment) },
-                { NetworksKeyInService, GenerateServiceNetworksSection(service.Networks) },
-            };
-
-            return serviceDict;
-        }
-
-        private List<string> GeneratePortsSection(List<PortEntity>? ports)
-        {
-            return ports?.Select(p => $"{p.HostPort}:{p.ContainerPort}/{p.Protocol}").ToList() ?? new List<string>();
-        }
-
-        private List<string> GenerateServiceVolumesSection(List<VolumeEntity>? volumes)
-        {
-            return volumes?.Select(v => $"{v.Source}:{v.Target}:{v.AccessMode}").ToList() ?? new List<string>();
-        }
-
-        private Dictionary<string, string> GenerateEnvironmentSection(List<EnvironmentEntity>? environment)
-        {
-            return environment?.ToDictionary(env => env.Key, env => env.Value) ?? new Dictionary<string, string>();
-        }
-
-        private List<string> GenerateServiceNetworksSection(List<NetworkEntity>? networks)
-        {
-            return networks?.Select(n => n.Name).ToList() ?? new List<string>();
-        }
-
-        private string GenerateRestartPolicySection(RestartPolicy? restartPolicy)
-        {
-            if (restartPolicy == null) return string.Empty;
-            var policy = restartPolicy.Condition;
-            if (restartPolicy.MaxRetries.HasValue) policy += $" (max_retries: {restartPolicy.MaxRetries})";
-            if (restartPolicy.Delay.HasValue) policy += $" (delay: {restartPolicy.Delay.Value})";
-            return policy;
-        }
-
-        private Dictionary<string, object> GenerateVolumesSection(List<VolumeEntity>? volumes)
-        {
-            var volumesDict = new Dictionary<string, object>();
-            foreach (var volume in volumes ?? new List<VolumeEntity>())
-            {
-                volumesDict[volume.Name] = new Dictionary<string, object>
+                foreach (var serviceDto in model.Services)
                 {
-                    { DriverKey, volume.Driver },
-                    { DriverOptionsKey, volume.DriverOptions ?? new Dictionary<string, string>() },
-                    { ExternalKey, volume.External ?? false },
-                    { LabelsKey, volume.Labels ?? new Dictionary<string, string>() },
-                    { ReadOnlyKey, volume.ReadOnly ?? false }
-                };
+                    if (string.IsNullOrWhiteSpace(serviceDto.Name))
+                        throw new ArgumentException("Service name cannot be null or empty.");
+                    if (string.IsNullOrWhiteSpace(serviceDto.Image))
+                        throw new ArgumentException($"Service '{serviceDto.Name}' must have a valid image.");
+
+                    var ports = serviceDto.Ports?.Select(p =>
+                        PortEntity.Create(p.HostPort, p.ContainerPort, p.Protocol)
+                    ).ToList() ?? new List<PortEntity>();
+
+                    var volumes = serviceDto.Volumes?.Select(v =>
+                        VolumeEntity.Create(
+                            v.Name ?? throw new ArgumentNullException(nameof(v.Name)),
+                            v.Target ?? string.Empty, 
+                            v.Source ?? string.Empty, 
+                            v.AccessMode ?? "rw", 
+                            v.Driver,
+                            v.DriverOptions,
+                            v.Labels,
+                            v.External ?? false,
+                            v.ReadOnly ?? false
+                        )
+                    ).ToList() ?? new List<VolumeEntity>();
+
+                    var environment = serviceDto.Environment?.Select(e =>
+                        EnvironmentEntity.Create(e.Key ?? string.Empty, e.Value ?? string.Empty)
+                    ).ToList() ?? new List<EnvironmentEntity>();
+
+                    var networks = serviceDto.Networks?.Select(n =>
+                        NetworkEntity.Create(
+                            n.Name ?? throw new ArgumentNullException(nameof(n.Name)),
+                            n.Driver,
+                            n.DriverOptions
+                        )
+                    ).ToList() ?? new List<NetworkEntity>();
+
+                    var restartPolicy = serviceDto.RestartPolicy != null
+                        ? RestartPolicyEntity.Create(
+                            serviceDto.RestartPolicy.Condition,
+                            serviceDto.RestartPolicy.MaxRetries,
+                            serviceDto.RestartPolicy.Delay
+                        )
+                        : null;
+
+                    var service = ServiceEntity.Create(
+                        serviceDto.Name,
+                        serviceDto.Image,
+                        ports,
+                        volumes,
+                        environment,
+                        networks,
+                        restartPolicy
+                    );
+
+                    dockerCompose.AddService(service);
+                }
             }
-            return volumesDict;
+
+            if (model.Volumes?.Any() == true)
+            {
+                foreach (var volumeDto in model.Volumes)
+                {
+                    if (string.IsNullOrWhiteSpace(volumeDto.Name))
+                        throw new ArgumentException("Volume name cannot be null or empty.");
+
+                    var volume = VolumeEntity.Create(
+                        volumeDto.Name,
+                        volumeDto.Target ?? string.Empty, 
+                        volumeDto.Source ?? string.Empty, 
+                        volumeDto.AccessMode ?? "rw",
+                        volumeDto.Driver,
+                        volumeDto.DriverOptions,
+                        volumeDto.Labels,
+                        volumeDto.External ?? false,
+                        volumeDto.ReadOnly ?? false
+                    );
+
+                    dockerCompose.Volumes.Add(volume);
+                }
+            }
+
+            if (model.Networks?.Any() == true)
+            {
+                foreach (var networkDto in model.Networks)
+                {
+                    if (string.IsNullOrWhiteSpace(networkDto.Name))
+                        throw new ArgumentException("Network name cannot be null or empty.");
+
+                    var network = NetworkEntity.Create(
+                        networkDto.Name,
+                        networkDto.Driver,
+                        networkDto.DriverOptions
+                    );
+
+                    dockerCompose.Networks.Add(network);
+                }
+            }
+
+            return dockerCompose.ToYaml();
         }
 
-        private Dictionary<string, object> GenerateNetworksSection(List<NetworkEntity>? networks)
-        {
-            var networksDict = new Dictionary<string, object>();
-            foreach (var network in networks ?? new List<NetworkEntity>())
-            {
-                networksDict[network.Name] = new Dictionary<string, object>
-                {
-                    { DriverKey, network.Driver },
-                    { InternalKey, network.Internal ?? false },
-                    { AttachableKey, network.Attachable ?? false },
-                    { DriverOptionsKey, network.DriverOptions ?? new Dictionary<string, string>() },
-                    { IpamKey, network.Ipam }
-                };
-            }
-            return networksDict;
-        }
 
         public FileContentResult DownloadYaml(string yamlContent, ControllerBase controllerBase)
         {

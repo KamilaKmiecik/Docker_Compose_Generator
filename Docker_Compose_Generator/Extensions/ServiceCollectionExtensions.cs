@@ -17,14 +17,12 @@ public static class ServiceCollectionExtensions
 
     public static class SessionExtensions
     {
-        // Zapisz obiekt jako JSON w sesji
         public static void SetObjectAsJson(this ISession session, string key, object value)
         {
             var json = JsonConvert.SerializeObject(value);
             session.SetString(key, json); // Zapisz jako string w sesji
         }
 
-        // Odczytaj obiekt z JSON z sesji
         public static T GetObjectFromJson<T>(this ISession session, string key)
         {
             var json = session.GetString(key);

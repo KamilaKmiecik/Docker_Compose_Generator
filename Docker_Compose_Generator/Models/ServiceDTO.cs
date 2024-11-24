@@ -36,9 +36,9 @@ public class Volume : VolumeDTO
     {
 
     }
-    public required string Source { get; set; }
-    public required string Target { get; set; }
-    public string? AccessMode { get; set; } = "rw";
+    public new required string Source { get; set; }
+    public new required string Target { get; set; }
+    public new string? AccessMode { get; set; } = "rw";
 }
 
 public class Network : NetworkDTO

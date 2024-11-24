@@ -14,12 +14,14 @@
         public string Source { get; set; }
         public VolumeEntity() { }
 
-        public static VolumeEntity Create(string name, string? driver = null, bool? external = false, bool? readOnly = false)
-        {
-            if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("Volume name cannot be empty");
-
-            return new VolumeEntity { Name = name, Driver = driver, External = external, ReadOnly = readOnly };
-        }
+        public static VolumeEntity Create(string name, string target, string source, string accessMode, string? driver = null, Dictionary<string, string>? driverOptions = null, Dictionary<string, string>? labels = null, bool? external = false, bool? readOnly = false) 
+        { 
+            if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("Volume name cannot be empty"); 
+            if (string.IsNullOrWhiteSpace(target)) throw new ArgumentException("Target cannot be empty");
+            if (string.IsNullOrWhiteSpace(source)) throw new ArgumentException("Source cannot be empty"); 
+            if (string.IsNullOrWhiteSpace(accessMode)) throw new ArgumentException("AccessMode cannot be empty"); 
+            
+            return new VolumeEntity { Name = name, Target = target, Source = source, AccessMode = accessMode, Driver = driver, DriverOptions = driverOptions, Labels = labels, External = external, ReadOnly = readOnly }; }
 
         public Dictionary<string, object> GenerateVolumeSection()
         {

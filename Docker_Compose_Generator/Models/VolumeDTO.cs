@@ -14,10 +14,11 @@ public class VolumeDTO
 
     public bool? ReadOnly { get; set; }
 
+    public string? Source { get; set; } 
 
+    public string? Target { get; set; } 
 
-    public VolumeDTO()
-    {
+    public string? AccessMode { get; set; } 
 
-    }
+    public VolumeDTO() { }
 }
