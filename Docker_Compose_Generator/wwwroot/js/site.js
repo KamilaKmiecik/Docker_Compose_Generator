@@ -8,6 +8,8 @@
             const div = document.createElement('div');
             div.innerHTML = html;
             container.appendChild(div);
+
+            div.scrollIntoView({ behavior: 'smooth', block: 'start' });
         });
 });
 
@@ -21,8 +23,13 @@ document.getElementById('add-network').addEventListener('click', function () {
             const div = document.createElement('div');
             div.innerHTML = html;
             container.appendChild(div);
-        });
+
+            // Auto-scroll
+            div.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        })
+        .catch(error => console.error('Error adding network:', error));
 });
+
 
 document.getElementById('add-volume').addEventListener('click', function () {
     const container = document.getElementById('volumes-container');
@@ -34,7 +41,10 @@ document.getElementById('add-volume').addEventListener('click', function () {
             const div = document.createElement('div');
             div.innerHTML = html;
             container.appendChild(div);
+
+            div.scrollIntoView({ behavior: 'smooth', block: 'start' });
         });
+
 });
 
 
@@ -323,17 +333,19 @@ function updateIndices(containerId, itemPrefix) {
 }
 
 function removeService(index) {
-    const item = document.getElementById(`service-item-@index`);
+    var id = document.getElementById(`service-item-${index}`)
+    const item = id;
     if (item) {
         item.remove(); // Usuń element DOM
-        updateIndices("services-container", "service"); // Aktualizuj indeksy
+        updateIndices("services-container", "service"); // Zaktualizuj indeksy
     }
 }
 
 function removeNetwork(index) {
-    const item = document.getElementById(`network-item-@index`);
+    var id = document.getElementById(`network-item-${index}`);
+    const item = id;
     if (item) {
         item.remove(); // Usuń element DOM
-        updateIndices("networks-container", "network"); // Aktualizuj indeksy
+        updateIndices("networks-container", "network"); // Zaktualizuj indeksy
     }
 }
