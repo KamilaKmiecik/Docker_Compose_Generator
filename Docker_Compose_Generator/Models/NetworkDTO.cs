@@ -23,7 +23,7 @@ public class NetworkDTO
 
 public class IPAMConfiguration
 {
-    public List<IPAMConfig>? Configurations { get; set; }
+    public IPAMConfig Configuration { get; set; }
 
     public string? Driver { get; set; }
 }

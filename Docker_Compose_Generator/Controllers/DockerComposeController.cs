@@ -190,5 +190,38 @@ namespace Docker_Compose_Generator.Controllers
             return Json(new { success = true, message = "Volume removed successfully." });
         }
 
+        [HttpPost]
+        public IActionResult RemoveIpamConfiguration([FromBody] RemoveIpamRequest request)
+        {
+            var model = HttpContext.Session.GetObjectFromJson<DockerComposeCreateDto>("DockerComposeModel") ?? new DockerComposeCreateDto();
+
+            var network = model.Networks.ElementAtOrDefault(request.NetworkIndex);
+            if (network == null || network.Ipam?.Configuration == null)
+            {
+                return Json(new { success = false, message = "Invalid network or IPAM configuration index." });
+            }
+
+            if (request.IpamIndex >= 0 )
+            {
+                HttpContext.Session.SetObjectAsJson("DockerComposeModel", model);
+                return Json(new { success = true });
+            }
+
+            return Json(new { success = false, message = "Invalid IPAM configuration index." });
+        }
+
+
     }
+
+    public class AddIpamRequest
+    {
+        public int NetworkIndex { get; set; }
+    }
+
+    public class RemoveIpamRequest
+    {
+        public int NetworkIndex { get; set; }
+        public int IpamIndex { get; set; }
+    }
+
 }

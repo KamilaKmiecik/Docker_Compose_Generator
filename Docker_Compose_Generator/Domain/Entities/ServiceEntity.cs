@@ -48,16 +48,16 @@ public class ServiceEntity
         if (Ports.Any())
             serviceSection["ports"] = Ports.Select(p => p.ToString()).ToList();
 
-        if (Environment.Any())
+        if (Environment.Any(x => !string.IsNullOrEmpty(x.Key)))
             serviceSection["environment"] = Environment.ToDictionary(e => e.Key, e => e.Value);
 
-        if (Volumes.Any())
+        if (Volumes.Any(x => !string.IsNullOrEmpty(x.Name)))
             serviceSection["volumes"] = Volumes.Select(v => v.GenerateVolumeSection()).ToList();
 
-        if (Networks.Any())
+        if (Networks.Any(x => !string.IsNullOrEmpty(x.Name)))
             serviceSection["networks"] = Networks.Select(n => n.Name).ToList();
 
-        if (RestartPolicy != null)
+        if (RestartPolicy != null && !string.IsNullOrEmpty(RestartPolicy.Condition))
             serviceSection["restart"] = RestartPolicy.Condition;
 
         return serviceSection;

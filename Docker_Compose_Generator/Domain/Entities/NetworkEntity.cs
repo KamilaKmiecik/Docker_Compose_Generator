@@ -1,4 +1,5 @@
 ﻿using Docker_Compose_Generator.Models;
+using Microsoft.AspNetCore.Http.Connections;
 
 namespace Docker_Compose_Generator.Domain.Entities;
 
@@ -11,7 +12,7 @@ public class NetworkEntity
     public IPAMConfigurationEntity? Ipam { get; private set; }
     public Dictionary<string, string>? DriverOptions { get; set; }
 
-    public static NetworkEntity Create(string name, string? driver = null, Dictionary<string, string>? driverOptions = null)
+    public static NetworkEntity Create(string name, string? driver = null, Dictionary<string, string>? driverOptions = null, IPAMConfigurationEntity? ipam = null)
     {
         if (string.IsNullOrWhiteSpace(name))
             throw new ArgumentException("Network name cannot be empty.");
@@ -20,7 +21,8 @@ public class NetworkEntity
         {
             Name = name,
             Driver = driver,
-            DriverOptions = driverOptions
+            DriverOptions = driverOptions,
+            Ipam = ipam
         };
     }
 
@@ -40,7 +42,7 @@ public class NetworkEntity
         if (Ipam != null)
             networkSection["ipam"] = Ipam.GenerateIpamSection();
 
-        if (DriverOptions != null && DriverOptions.Any())
+        if (DriverOptions != null && DriverOptions.Any(x => !string.IsNullOrEmpty(x.Key)))
             networkSection["driver_opts"] = DriverOptions;
 
         return networkSection;
@@ -49,20 +51,31 @@ public class NetworkEntity
 
 public class IPAMConfigurationEntity
 {
-    public List<IPAMConfigEntity> Configurations { get; private set; } = new();
+    public IPAMConfigEntity Configuration { get; private set; } = new();
     public string? Driver { get; private set; }
+    public string? Subnet { get; private set; }
+    public string? Gateway { get; private set; }
 
-    public static IPAMConfigurationEntity Create(string? driver = null)
+    public static IPAMConfigurationEntity Create(string? driver = null, IPAMConfigEntity iPAM = null)
     {
-        return new IPAMConfigurationEntity { Driver = driver };
+        return new IPAMConfigurationEntity { Driver = driver, Configuration = iPAM };
+    }   
+    
+    public static IPAMConfigurationEntity Create(string? subnet, string? gateway, string? driver = null)
+    {
+        return new IPAMConfigurationEntity { Driver = driver, Subnet = subnet, Gateway = gateway };
     }
 
     public Dictionary<string, object> GenerateIpamSection()
     {
+        if (Configuration == null)
+            throw new Exception("Add IPAM Configuration!");
+
+
         return new Dictionary<string, object>
         {
             { "driver", Driver ?? "default" },
-            { "config", Configurations.Select(c => c.GenerateIpamConfigSection()).ToList() }
+            { "config", Configuration.GenerateIpamConfigSection(Subnet, Gateway) }
         };
     }
 }
@@ -82,6 +95,24 @@ public class IPAMConfigEntity
         var configSection = new Dictionary<string, object>();
         if (!string.IsNullOrEmpty(Subnet)) configSection["subnet"] = Subnet;
         if (!string.IsNullOrEmpty(Gateway)) configSection["gateway"] = Gateway;
+
+        return configSection;
+    }  
+    
+    public Dictionary<string, object> GenerateIpamConfigSection(string subnet, string gateway)
+    {
+        var configSection = new Dictionary<string, object>();
+        if (!string.IsNullOrEmpty(subnet)) 
+            configSection["subnet"] = subnet;
+        else 
+            throw new Exception("Fill in the subnet in ipam configuration");
+
+
+        if (!string.IsNullOrEmpty(gateway)) 
+            configSection["gateway"] = gateway;
+        else 
+            throw new Exception("Fill in the gateway in ipam configuration");
+
         return configSection;
     }
 }
@@ -109,7 +140,9 @@ public class RestartPolicyEntity
     public static RestartPolicyEntity Create(string condition, int? maxRetries = null, TimeSpan? delay = null)
     {
         if (string.IsNullOrWhiteSpace(condition))
-            throw new ArgumentException("Restart policy condition cannot be empty.");
+            condition = string.Empty; 
+
+       //     throw new ArgumentException("Restart policy condition cannot be empty.");
 
         return new RestartPolicyEntity { Condition = condition, MaxRetries = maxRetries, Delay = delay };
     }

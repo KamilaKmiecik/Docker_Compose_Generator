@@ -9,6 +9,7 @@
 
     <label>Driver:</label>
     <select name="Networks[@index].Driver">
+        <option value=""> </option>
         <option value="bridge"> Bridge</option>
         <option value="host">Host</option>
         <option value="overlay" >Overlay</option>
@@ -26,20 +27,17 @@
     <div class="ipam">
         <h4>IPAM Configuration</h4>
         <div id="ipam-configurations-@index">
-            @if (Model.Ipam?.Configurations != null)
+            @if (Model.Ipam?.Configuration != null)
             {
-                for (int i = 0; i < Model.Ipam.Configurations.Count; i++)
-                {
                     <div class="ipam-item">
                         <label>Subnet:</label>
-                        <input type="text" name="Networks[@index].Ipam.Configurations[@i].Subnet" value="@Model.Ipam.Configurations[i].Subnet" />
+                        <input type="text" name="Networks[@index].Ipam.Configuration.Subnet" value="@Model.Ipam.Configuration.Subnet" />
 
                         <label>Gateway:</label>
-                        <input type="text" name="Networks[@index].Ipam.Configurations[@i].Gateway" value="@Model.Ipam.Configurations[i].Gateway" />
+                        <input type="text" name="Networks[@index].Ipam.Configuration.Gateway" value="@Model.Ipam.Configuration.Gateway" />
 
                         <button type="button" class="remove-ipam-button">Remove IPAM</button>
                     </div>
-                }
             }
         </div>
         <button type="button" class="add-ipam-button" data-network-index="@index">Add IPAM Configuration</button>

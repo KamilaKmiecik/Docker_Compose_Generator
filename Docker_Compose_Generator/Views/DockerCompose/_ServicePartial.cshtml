@@ -16,6 +16,7 @@
         <h4>Restart Policy</h4>
         <label>Condition:</label>
         <select name="Services[@index].RestartPolicy.Condition">
+            <option value=""></option>
             <option value="no">No</option>
             <option value="always" >Always</option>
             <option value="on-failure">On-Failure</option>
@@ -63,6 +64,7 @@
                         <input type="number" name="Services[@index].Ports[@i].ContainerPort" value="@Model.Ports[i].ContainerPort" placeholder="Container Port" />
                         <label>Protocol:</label>
                         <select name="Services[@index].Ports[@i].Protocol">
+                            <option value=""></option>
                             <option value="tcp">TCP</option>
                             <option value="udp" >UDP</option>
                         </select>
@@ -94,6 +96,25 @@
         </div>
         <button type="button" class="add-volume-button" data-service-index="@index">Add Volume</button>
     </div>
+
+    <div class="networks">
+        <h4>Networks</h4>
+        <div id="network-container-@index">
+            @if (Model.Networks != null)
+            {
+                for (int i = 0; i < Model.Networks.Count; i++)
+                {
+                    <div class="network-item">
+                        <label>Name:</label>
+                        <input type="text" name="Services[@index].Networks[@i].Name" value="@Model.Networks[i].Name" placeholder="Network Name" />
+                        <button type="button" class="remove-network-button">Remove</button>
+                    </div>
+                }
+            }
+        </div>
+        <button type="button" class="add-network-button" data-service-index="@index">Add Network</button>
+    </div>
+
 
 
     <button type="button" class="remove-button" onclick="removeService(@index)">Remove Service</button>

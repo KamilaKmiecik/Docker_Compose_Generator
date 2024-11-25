@@ -9,7 +9,7 @@ body {
     flex: 1;
     display: flex;
     flex-direction: column;
-    min-height: 100vh; 
+    min-height: 100vh;
 }
 
 .app-header {
@@ -55,7 +55,7 @@ body {
 }
 
 .add-button {
-    background-color: #ec1d25;
+    background-color: #167dff;
     color: #fff;
     border: none;
     padding: 0.5rem 1rem;
@@ -64,11 +64,11 @@ body {
 }
 
     .add-button:hover {
-        background-color: #0056b3;
+        background-color: #218838;
     }
 
 .submit-button {
-    background-color: #6c1412;
+    background-color: #3e95ff;
     color: #fff;
     border: none;
     padding: 1rem;
@@ -105,7 +105,7 @@ input, select {
 
 /* Button Styling */
 button {
-    background-color: #ec1d25;
+    background-color: #167dff;
     color: #ffffff;
     border: none;
     padding: 10px 20px;
@@ -117,7 +117,7 @@ button {
 }
 
     button:hover {
-        background-color: #b71c1c;
+        background-color: #104a5e;
     }
 
 /* Card Styling */
@@ -131,7 +131,7 @@ button {
 
     /* Header Styling */
     .card h3, h4 {
-        color: #ec1d25;
+        color: #3e95ff;
         font-weight: bold;
         margin-bottom: 10px;
     }
@@ -143,7 +143,7 @@ button {
 
 h4 {
     margin-top: 15px;
-    color: #ff5656;
+    color: #167dff;
     font-size: 1.2rem;
 }
 
@@ -158,7 +158,7 @@ button {
 
 h4 {
     margin-top: 15px;
-    color: #ff5656;
+    color: #167dff;
     font-size: 1.2rem;
 }
 
@@ -170,7 +170,7 @@ button {
     display: flex;
     flex-direction: column;
     margin-bottom: 10px;
-    background-color: #2a2a2a;
+    background-color: #3e95ff;
     padding: 10px;
     border-radius: 5px;
 }
@@ -216,7 +216,7 @@ button {
     /* Nag³ówki sekcji */
     .section h2 {
         text-align: center;
-        color: #ec1d25;
+        color: #167dff;
         margin-bottom: 10px;
     }
 
@@ -228,7 +228,7 @@ button {
     display: block;
     margin: 0 auto;
     padding: 10px 20px;
-    background-color: #ec1d25;
+    background-color: #167dff;
     color: white;
     border: none;
     border-radius: 5px;
@@ -238,7 +238,7 @@ button {
 }
 
     .add-button:hover {
-        background-color: #b71c1c;
+        background-color: #104a5e;
     }
 
 @media (max-width: 768px) {
@@ -268,7 +268,7 @@ label, input[type="checkbox"] {
         margin: 0; /* Usuñ domyœlne marginesy */
         width: 16px; /* Standardowa szerokoœæ */
         height: 16px; /* Standardowa wysokoœæ */
-        accent-color: #ec1d25; /* Kolor zaznaczenia (nowoczesne przegl¹darki) */
+        accent-color: #167dff; /* Kolor zaznaczenia (nowoczesne przegl¹darki) */
     }
 
 /* Kontenery przewijania */
@@ -291,18 +291,18 @@ label, input[type="checkbox"] {
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #ec1d25; /* Kolor suwaka */
+    background: #3e95ff; /* Kolor suwaka */
     border-radius: 10px; /* Zaokr¹glenie suwaka */
     border: 2px solid #2a2a2a; /* Oddzielenie suwaka od t³a */
 }
 
     ::-webkit-scrollbar-thumb:hover {
-        background: #b71c1c; /* Ciemniejszy odcieñ po najechaniu */
+        background: #167dff; /* Ciemniejszy odcieñ po najechaniu */
     }
 
 /* Styl dla Firefoksa */
 * {
-    scrollbar-color: #ec1d25 #2a2a2a; /* Kolor suwaka i t³a */
+    scrollbar-color: #3e95ff #2a2a2a; /* Kolor suwaka i t³a */
     scrollbar-width: thin; /* W¹ski pasek przewijania */
 }
 
@@ -321,3 +321,61 @@ label, input[type="checkbox"] {
     transition: all 0.3s ease;
 }
 
+.ip-input {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+    .ip-input input {
+        width: 35px;
+        text-align: center;
+        padding: 0px;
+        border: 1px solid #343a40;
+        border-radius: 4px;
+        background-color: #1a1c1e;
+        color: #e0e6ed;
+        font-size: 10px;
+    }
+
+    .ip-input span {
+        color: #e0e6ed;
+        font-weight: bold;
+    }
+
+
+
+.ipam-item {
+    background-color: #1e1e1e;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    transition: box-shadow 0.3s ease, transform 0.2s ease;
+}
+
+    .ipam-item:hover {
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+        transform: translateY(-4px);
+    }
+
+    .ipam-item h4 {
+        color: #3e95ff;
+        margin-bottom: 0.5rem;
+    }
+
+.add-ipam-button, .remove-ipam-button {
+    background-color: #167dff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin-top: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+    .add-ipam-button:hover, .remove-ipam-button:hover {
+        background-color: #104a5e;
+        transform: translateY(-2px);
+    }

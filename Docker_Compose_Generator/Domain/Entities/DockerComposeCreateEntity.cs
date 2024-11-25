@@ -1,4 +1,5 @@
-﻿using YamlDotNet.Serialization;
+﻿using Newtonsoft.Json;
+using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
 namespace Docker_Compose_Generator.Domain.Entities
@@ -33,10 +34,21 @@ namespace Docker_Compose_Generator.Domain.Entities
             var composeDict = new Dictionary<string, object>
             {
                 { "version", Version },
-                { "services", Services.ToDictionary(s => s.Name, s => s.GenerateServiceSection()) },
-                { "volumes", Volumes.ToDictionary(v => v.Name, v => v.GenerateVolumeSection()) },
-                { "networks", Networks.ToDictionary(n => n.Name, n => n.GenerateNetworkSection()) }
             };
+
+            if(Services.Any())
+                composeDict.Add( "services", Services.ToDictionary(s => s.Name, s => s.GenerateServiceSection()) );
+
+             if(Volumes.Any())
+                composeDict.Add( "volumes", Volumes.ToDictionary(v => v.Name, v => v.GenerateVolumeSection()) );
+
+             if(Networks.Any())
+                composeDict.Add( "networks", Networks.ToDictionary(n => n.Name, n => n.GenerateNetworkSection()));
+
+
+            var json = JsonConvert.SerializeObject(composeDict, Formatting.Indented);
+            var deserializer = new DeserializerBuilder().Build();
+            var yamlObject = deserializer.Deserialize(new StringReader(json));
 
             var serializer = new SerializerBuilder()
                 .WithNamingConvention(CamelCaseNamingConvention.Instance)

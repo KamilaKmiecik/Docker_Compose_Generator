@@ -38,12 +38,7 @@ namespace Docker_Compose_Generator.Services
                             v.Name ?? throw new ArgumentNullException(nameof(v.Name)),
                             v.Target ?? string.Empty, 
                             v.Source ?? string.Empty, 
-                            v.AccessMode ?? "rw", 
-                            v.Driver,
-                            v.DriverOptions,
-                            v.Labels,
-                            v.External ?? false,
-                            v.ReadOnly ?? false
+                            v.AccessMode ?? string.Empty
                         )
                     ).ToList() ?? new List<VolumeEntity>();
 
@@ -53,9 +48,9 @@ namespace Docker_Compose_Generator.Services
 
                     var networks = serviceDto.Networks?.Select(n =>
                         NetworkEntity.Create(
-                            n.Name ?? throw new ArgumentNullException(nameof(n.Name)),
-                            n.Driver,
-                            n.DriverOptions
+                            n.Name ?? throw new ArgumentNullException(nameof(n.Name))//,
+                          //  n.Driver,
+                          //  n.DriverOptions
                         )
                     ).ToList() ?? new List<NetworkEntity>();
 
@@ -92,7 +87,7 @@ namespace Docker_Compose_Generator.Services
                         volumeDto.Name,
                         volumeDto.Target ?? string.Empty, 
                         volumeDto.Source ?? string.Empty, 
-                        volumeDto.AccessMode ?? "rw",
+                        volumeDto.AccessMode ?? string.Empty,
                         volumeDto.Driver,
                         volumeDto.DriverOptions,
                         volumeDto.Labels,
@@ -111,10 +106,20 @@ namespace Docker_Compose_Generator.Services
                     if (string.IsNullOrWhiteSpace(networkDto.Name))
                         throw new ArgumentException("Network name cannot be null or empty.");
 
+                    
+                    var ipam = networkDto.Ipam != null
+                       ? IPAMConfigurationEntity.Create(
+                           networkDto.Ipam.Configuration.Subnet,
+                           networkDto.Ipam.Configuration.Gateway,
+                           networkDto.Ipam.Driver
+                       )
+                       : null;
+
                     var network = NetworkEntity.Create(
                         networkDto.Name,
                         networkDto.Driver,
-                        networkDto.DriverOptions
+                        networkDto.DriverOptions,
+                        ipam
                     );
 
                     dockerCompose.Networks.Add(network);
