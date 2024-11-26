@@ -3,14 +3,6 @@
 <form asp-action="CreateUsingUI" asp-controller="DockerCompose" method="post" id="docker-compose-form">
     <div class="app-container">
 
-@*         <nav class="app-nav">
-            <ul>
-                <li><a href="#services-section">Services</a></li>
-                <li><a href="#networks-section">Networks</a></li>
-                <li><a href="#volumes-section">Volumes</a></li>
-            </ul>
-        </nav> *@
-
         <main class="app-main">
 
             @if (TempData["ErrorMessage"] != null)

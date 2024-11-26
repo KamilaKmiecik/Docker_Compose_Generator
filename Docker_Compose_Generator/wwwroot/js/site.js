@@ -250,3 +250,35 @@ document.getElementById('add-network').addEventListener('click', () => {
 document.getElementById('add-volume').addEventListener('click', () => {
     addDynamicElement('volumes-container', '/DockerCompose/GetVolumePartial', 'Volume');
 });
+
+
+
+document.querySelector('form').addEventListener('submit', function (event) {
+    const ipamItems = document.querySelectorAll('.ipam-item');
+
+    ipamItems.forEach((item) => {
+        const subnetInputs = item.querySelectorAll('input[name*="Subnet"]');
+        const subnet = Array.from(subnetInputs).map(input => input.value).join('.');
+
+        const subnetField = document.createElement('input');
+        subnetField.type = 'hidden';
+        subnetField.name = subnetInputs[0].name.replace(/\.Subnet\[\d+\]/, '.Subnet');
+        subnetField.value = subnet;
+
+        subnetInputs.forEach(input => input.remove());
+
+        item.appendChild(subnetField);
+
+        const gatewayInputs = item.querySelectorAll('input[name*="Gateway"]');
+        const gateway = Array.from(gatewayInputs).map(input => input.value).join('.');
+
+        const gatewayField = document.createElement('input');
+        gatewayField.type = 'hidden';
+        gatewayField.name = gatewayInputs[0].name.replace(/\.Gateway\[\d+\]/, '.Gateway');
+        gatewayField.value = gateway;
+
+        gatewayInputs.forEach(input => input.remove());
+
+        item.appendChild(gatewayField);
+    });
+});
