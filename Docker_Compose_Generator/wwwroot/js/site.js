@@ -223,8 +223,8 @@ document.addEventListener('click', function (event) {
 
         const volumeHtml = `
             <div class="volume-item">
-                <label>Name:</label>
-                <input type="text" name="Services[${index}].Volumes[${volumeIndex}].Name" placeholder="Name" />               
+                <label>Name/Type:</label>
+                <input type="text" name="Services[${index}].Volumes[${volumeIndex}].Name" placeholder="Name/Type" />               
                 <label>Source:</label>
                 <input type="text" name="Services[${index}].Volumes[${volumeIndex}].Source" placeholder="Source" />
                 <label>Target:</label>
@@ -243,14 +243,14 @@ document.addEventListener('click', function (event) {
         if (event.target.classList.contains('add-network-button')) {
             const serviceIndex = event.target.getAttribute('data-service-index');
             const container = document.querySelector(`#network-container-${serviceIndex}`);
-
+            const networkIndex = container.children.length;
             if (container) {
                 // Dodaj nowy element sieci
                 const networkItem = document.createElement('div');
                 networkItem.classList.add('network-item');
                 networkItem.innerHTML = `
                     <label>Name:</label>
-                    <input type="text" name="Services[${serviceIndex}].Networks[]" placeholder="Network Name" />
+                    <input type="text" name="Services[${serviceIndex}].Networks[${networkIndex}].Name" placeholder="Network Name" />
                     <button type="button" class="remove-network-button">Remove</button>
                 `;
                 container.appendChild(networkItem);
@@ -267,10 +267,54 @@ document.addEventListener('click', function (event) {
         }
 });
 
+//document.addEventListener('click', function (event) {
+//    const target = event.target;
+
+//    // Driver Options
+//    if (target.classList.contains('add-driver-option-button')) {
+//        const index = target.getAttribute('data-volume-index');
+//        const container = document.getElementById(`driver-options-container-${index}`);
+//        const driverOptionHtml = `
+//            <div class="driver-option-item">
+//                <label>Key:</label>
+//                <input type="text" name="Volumes[${index}].DriverOptions[newKey]" placeholder="Enter key" />
+//                <label>Value:</label>
+//                <input type="text" name="Volumes[${index}].DriverOptions[newValue]" placeholder="Enter value" />
+//                <button type="button" class="remove-driver-option-button">Remove Option</button>
+//            </div>
+//        `;
+//        container.insertAdjacentHTML('beforeend', driverOptionHtml);
+//    }
+
+//    if (target.classList.contains('remove-driver-option-button')) {
+//        target.closest('.driver-option-item').remove();
+//    }
+
+//    // Labels
+//    if (target.classList.contains('add-label-button')) {
+//        const index = target.getAttribute('data-volume-index');
+//        const container = document.getElementById(`labels-container-${index}`);
+//        const labelHtml = `
+//            <div class="label-item">
+//                <label>Key:</label>
+//                <input type="text" name="Volumes[${index}].Labels[newKey]" placeholder="Enter key" />
+//                <label>Value:</label>
+//                <input type="text" name="Volumes[${index}].Labels[newValue]" placeholder="Enter value" />
+//                <button type="button" class="remove-label-button">Remove Label</button>
+//            </div>
+//        `;
+//        container.insertAdjacentHTML('beforeend', labelHtml);
+//    }
+
+//    if (target.classList.contains('remove-label-button')) {
+//        target.closest('.label-item').remove();
+//    }
+//});
+
+
 document.addEventListener('click', function (event) {
     const target = event.target;
 
-    // Driver Options
     if (target.classList.contains('add-driver-option-button')) {
         const index = target.getAttribute('data-volume-index');
         const container = document.getElementById(`driver-options-container-${index}`);
@@ -288,52 +332,10 @@ document.addEventListener('click', function (event) {
 
     if (target.classList.contains('remove-driver-option-button')) {
         target.closest('.driver-option-item').remove();
-    }
-
-    // Labels
-    if (target.classList.contains('add-label-button')) {
-        const index = target.getAttribute('data-volume-index');
-        const container = document.getElementById(`labels-container-${index}`);
-        const labelHtml = `
-            <div class="label-item">
-                <label>Key:</label>
-                <input type="text" name="Volumes[${index}].Labels[newKey]" placeholder="Enter key" />
-                <label>Value:</label>
-                <input type="text" name="Volumes[${index}].Labels[newValue]" placeholder="Enter value" />
-                <button type="button" class="remove-label-button">Remove Label</button>
-            </div>
-        `;
-        container.insertAdjacentHTML('beforeend', labelHtml);
-    }
-
-    if (target.classList.contains('remove-label-button')) {
-        target.closest('.label-item').remove();
     }
 });
 
-
-document.addEventListener('click', function (event) {
-    const target = event.target;
-
-    if (target.classList.contains('add-driver-option-button')) {
-        const index = target.getAttribute('data-volume-index');
-        const container = document.getElementById(`driver-options-container-${index}`);
-        const driverOptionHtml = `
-            <div class="driver-option-item">
-                <label>Key:</label>
-                <input type="text" name="Volumes[${index}].DriverOptions[newKey]" placeholder="Enter key" />
-                <label>Value:</label>
-                <input type="text" name="Volumes[${index}].DriverOptions[newValue]" placeholder="Enter value" />
-                <button type="button" class="remove-driver-option-button">Remove Option</button>
-            </div>
-        `;
-        container.insertAdjacentHTML('beforeend', driverOptionHtml);
-    }
-
-    if (target.classList.contains('remove-driver-option-button')) {
-        target.closest('.driver-option-item').remove();
-    }
-
+    document.addEventListener('click', function (event) {
     if (target.classList.contains('add-label-button')) {
         const index = target.getAttribute('data-volume-index');
         const container = document.getElementById(`labels-container-${index}`);

@@ -80,23 +80,19 @@ namespace Docker_Compose_Generator.Domain.Entities
         {
             var volumeSection = new Dictionary<string, object>();
 
-            var volSection = new Dictionary<string, object>();
-
+            if (!string.IsNullOrEmpty(Name))
+            {
+                volumeSection["type"] = Name;
+            }
 
             if (!string.IsNullOrEmpty(Source))
             {
-                volSection["source"] = Source;
+                volumeSection["source"] = Source;
             }
 
             if (!string.IsNullOrEmpty(Target))
             {
-                volSection["target"] = Target;
-            }
-
-
-            if (!string.IsNullOrEmpty(Name))
-            {
-                volumeSection[Name] = volSection != null ? volSection : string.Empty;
+                volumeSection["target"] = Target;
             }
 
             return volumeSection;
