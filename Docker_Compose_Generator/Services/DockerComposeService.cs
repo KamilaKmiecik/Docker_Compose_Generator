@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Docker_Compose_Generator.Domain.Entities;
+﻿using Docker_Compose_Generator.Domain.Entities;
 using Docker_Compose_Generator.Models;
 using Microsoft.AspNetCore.Mvc;
 using YamlDotNet.Serialization;

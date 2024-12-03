@@ -11,7 +11,6 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
-builder.Services.AddAutoMapper(typeof(Program));
 //builder.Services.AddScoped<IDockerComposeService, DockerComposeService>();
 builder.Services.AddServices();
 

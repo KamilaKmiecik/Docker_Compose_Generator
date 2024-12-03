@@ -38,7 +38,7 @@ public class NetworkEntity
 
         if (Attachable.HasValue && Attachable.Value)
             networkSection["attachable"] = true;
-
+            
         if (Ipam != null)
             networkSection["ipam"] = Ipam.GenerateIpamSection();
 
@@ -70,7 +70,13 @@ public class IPAMConfigurationEntity
     {
         if (Configuration == null)
             throw new Exception("Add IPAM Configuration!");
-
+        
+        if (string.IsNullOrEmpty(Subnet))
+            throw new Exception("Fill in the subnet");
+         
+        if (string.IsNullOrEmpty(Gateway))
+            throw new Exception("Fill in the gateway");
+        
 
         return new Dictionary<string, object>
         {
