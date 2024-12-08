@@ -45,6 +45,42 @@ document.addEventListener('click', function (event) {
         target.closest('.driver-option-item').remove();
     }
 
+    // Obsługa opcji sterownika w wolumenach
+    document.addEventListener('click', function (event) {
+        const target = event.target;
+
+        if (target.classList.contains('add-driver-option-button')) {
+            const index = target.getAttribute('data-volume-index');
+            const container = document.getElementById(`driver-options-container-${index}`);
+
+            if (!container) {
+                console.error(`Container for driver options not found: driver-options-container-${index}`);
+                return;
+            }
+
+            const driverOptionHtml = `
+            <div class="driver-option-item">
+                <label>Key:</label>
+                <input type="text" name="Volumes[${index}].DriverOptions[newKey]" placeholder="Enter key" />
+                <label>Value:</label>
+                <input type="text" name="Volumes[${index}].DriverOptions[newValue]" placeholder="Enter value" />
+                <button type="button" class="remove-driver-option-button">Remove Option</button>
+            </div>
+        `;
+            container.insertAdjacentHTML('beforeend', driverOptionHtml);
+        }
+
+        if (target.classList.contains('remove-driver-option-button')) {
+            const driverOptionItem = target.closest('.driver-option-item');
+            if (driverOptionItem) {
+                driverOptionItem.remove();
+            } else {
+               // console.error('Driver option item to remove not found.');
+            }
+        }
+    });
+
+
     // Obsługa etykiet (Labels) w wolumenach
     if (target.classList.contains('add-label-button')) {
         const index = target.getAttribute('data-volume-index');
