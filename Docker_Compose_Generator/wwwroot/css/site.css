@@ -381,20 +381,19 @@ label, input[type="checkbox"] {
     }
 
 .remove-btn {
-    position: absolute; /* Umiejscowienie w prawym górnym rogu */
-    top: 5px; /* Odleg³oœæ od góry kontenera */
-    right: 20px; /* Odleg³oœæ od prawej krawêdzi kontenera */
-    width: 20px; /* Szerokoœæ przycisku */
-    height: 20px; /* Wysokoœæ przycisku */
-    background-color: #ff4d4d; /* Czerwone t³o */
+    position: absolute; 
+    top: 5px; 
+    right: 20px; 
+    width: 20px;
+    height: 20px; 
+    background-color: #ff4d4d; 
     border: 2px solid #fff;
-    border-radius: 8px; /* Zaokr¹glenie naro¿ników */
-    display: flex; /* Wyrównanie ikony wewn¹trz */
-    justify-content: center; /* Wyrównanie ikony w poziomie */
-    align-items: center; /* Wyrównanie ikony w pionie */
+    border-radius: 8px; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
     content: "\2716";
-    cursor: pointer; /* WskaŸnik w formie d³oni */
-}
+    cursor: pointer; 
 
     .remove-btn::before {
         content: "\2716"; /* Unicode dla "X" */
@@ -405,8 +404,8 @@ label, input[type="checkbox"] {
 
 
     .remove-btn:hover {
-        background-color: #e60000; /* Ciemniejszy czerwony przy najechaniu */
-        border-color: #333333; /* Ciemniejsze obramowanie przy najechaniu */
+        background-color: #e60000;
+        border-color: #333333; 
     }
 
 

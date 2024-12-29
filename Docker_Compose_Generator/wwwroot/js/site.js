@@ -1,6 +1,4 @@
-﻿// Dodawanie dynamicznych elementów (usługi, sieci, wolumeny)
-
-function addDynamicElement(containerId, endpoint, type) {
+﻿function addDynamicElement(containerId, endpoint, type) {
     const container = document.getElementById(containerId);
     const index = container.children.length;
 
@@ -13,17 +11,12 @@ function addDynamicElement(containerId, endpoint, type) {
 
             container.appendChild(div);
             div.scrollIntoView({ behavior: 'smooth', block: 'start' });
-           
-           // const removeButton = document.getElementById(`${type.toLowerCase()}-rem-${index}`);
-           // removeButton.addEventListener('click', () => container.removeChild(div));
-
 
             const removeButton = document.getElementById(`${type.toLowerCase()}-rem-${index}`);
             removeButton.addEventListener('click', () => {
-                const previousElement = div.previousElementSibling; // Znajdź poprzedni element
-                container.removeChild(div); // Usuń obecny element
+                const previousElement = div.previousElementSibling; 
+                container.removeChild(div); 
 
-                // Jeśli istnieje poprzedni element, przewiń do niego
                 if (previousElement) {
                     previousElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
@@ -52,7 +45,6 @@ document.addEventListener('click', function (event) {
         target.closest('.driver-option-item').remove();
     }
 
-    // Obsługa opcji sterownika w wolumenach
     document.addEventListener('click', function (event) {
         const target = event.target;
 
@@ -88,7 +80,6 @@ document.addEventListener('click', function (event) {
     });
 
 
-    // Obsługa etykiet (Labels) w wolumenach
     if (target.classList.contains('add-label-button')) {
         const index = target.getAttribute('data-volume-index');
         const container = document.getElementById(`labels-container-${index}`);
@@ -157,7 +148,6 @@ document.addEventListener('click', function (event) {
         target.closest('.ipam-item').remove();
     }
 
-    // Obsługa opcji sterownika w sieciach
     if (target.classList.contains('add-driver-option-button')) {
         const index = target.getAttribute('data-network-index');
         const container = document.getElementById(`driver-options-${index}`);
@@ -176,7 +166,6 @@ document.addEventListener('click', function (event) {
     }
 
 
-    // Obsługa opcji sterownika
     if (target.classList.contains('add-driver-option-button')) {
         const index = target.getAttribute('data-network-index');
         const container = document.getElementById(`driver-options-${index}`);
@@ -194,7 +183,6 @@ document.addEventListener('click', function (event) {
         target.closest('.driver-option-item').remove();
     }
 
-    // Obsługa zmiennych środowiskowych
     if (target.classList.contains('add-env-button')) {
         const index = target.getAttribute('data-service-index');
         const container = document.getElementById(`env-container-${index}`);
@@ -214,7 +202,6 @@ document.addEventListener('click', function (event) {
         target.closest('.env-item').remove();
     }
 
-    // Obsługa portów
     if (target.classList.contains('add-port-button')) {
         const index = target.getAttribute('data-service-index');
         const container = document.getElementById(`port-container-${index}`);
@@ -240,7 +227,6 @@ document.addEventListener('click', function (event) {
         target.closest('.port-item').remove();
     }
 
-    // Obsługa wolumenów
     if (target.classList.contains('add-volume-button')) {
         const index = target.getAttribute('data-service-index');
         const container = document.getElementById(`volume-container-${index}`);
@@ -262,7 +248,6 @@ document.addEventListener('click', function (event) {
         target.closest('.volume-item').remove();
     }
 
-    // Obsługa sieci
     if (target.classList.contains('add-network-button')) {
         const serviceIndex = target.getAttribute('data-service-index');
         const container = document.querySelector(`#network-container-${serviceIndex}`);
@@ -281,7 +266,6 @@ document.addEventListener('click', function (event) {
     }
 });
 
-// Dodawanie głównych dynamicznych elementów
 document.getElementById('add-service').addEventListener('click', () => {
     addDynamicElement('services-container', '/DockerCompose/GetServicePartial', 'Service');
 });
