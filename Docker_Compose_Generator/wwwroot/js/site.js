@@ -1,4 +1,5 @@
 ﻿// Dodawanie dynamicznych elementów (usługi, sieci, wolumeny)
+
 function addDynamicElement(containerId, endpoint, type) {
     const container = document.getElementById(containerId);
     const index = container.children.length;
@@ -10,24 +11,30 @@ function addDynamicElement(containerId, endpoint, type) {
             div.classList.add(`${type.toLowerCase()}-item`);
             div.innerHTML = html;
 
-            const removeButton = document.createElement('button');
-            removeButton.textContent = `Remove ${type}`;
-            removeButton.classList.add('remove-button');
-            removeButton.type = 'button';
-            removeButton.addEventListener('click', () => container.removeChild(div));
-
-            div.appendChild(removeButton);
             container.appendChild(div);
             div.scrollIntoView({ behavior: 'smooth', block: 'start' });
+           
+           // const removeButton = document.getElementById(`${type.toLowerCase()}-rem-${index}`);
+           // removeButton.addEventListener('click', () => container.removeChild(div));
+
+
+            const removeButton = document.getElementById(`${type.toLowerCase()}-rem-${index}`);
+            removeButton.addEventListener('click', () => {
+                const previousElement = div.previousElementSibling; // Znajdź poprzedni element
+                container.removeChild(div); // Usuń obecny element
+
+                // Jeśli istnieje poprzedni element, przewiń do niego
+                if (previousElement) {
+                    previousElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
         })
         .catch(error => console.error(`Error adding ${type}:`, error));
 }
 
-// Obsługa kliknięć na dynamiczne guziki
 document.addEventListener('click', function (event) {
     const target = event.target;
 
-    // Obsługa opcji sterownika w wolumenach
     if (target.classList.contains('add-driver-option-button')) {
         const index = target.getAttribute('data-volume-index');
         const container = document.getElementById(`driver-options-container-${index}`);

@@ -2,7 +2,8 @@
     var index = (int)ViewData["index"];
 }
 
-<div id="network-item-@index" class="card volume-item" data-index="@index">
+<div id="volume-item-@index" class="card volume-item" data-index="@index">
+    <button type="button" id="volume-rem-@index" " class="btn-close remove-btn" aria-label="Close"></button>
     <label>Name:</label>
     <input type="text" name="Volumes[@index].Name" value="@Model.Name" placeholder="Enter volume name" required />
 
